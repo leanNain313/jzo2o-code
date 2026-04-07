@@ -1,0 +1,61 @@
+transport.tls.enable = true		# 从 v0.50.0版本开始，transport.tls.enable的默认值为 true
+serverAddr = "175.24.138.204" # 服务端ip
+serverPort = 7000 # 服务端端口
+auth.method = 'token' # 客户端访问验证方式
+auth.token = 'Yye02408926.' # 客户端访问验证密码
+
+[[proxies]]
+name = "fonted_client"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 3000
+remotePort = 3000
+
+[[proxies]]
+name = "gateway"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11500
+remotePort = 11500
+
+[[proxies]]
+name = "public_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11503
+remotePort = 11503
+
+[[proxies]]
+name = "foundations_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11509
+remotePort = 11509
+
+[[proxies]]
+name = "customer_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11502
+remotePort = 11502
+
+[[proxies]]
+name = "trade_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11505
+remotePort = 11505
+
+[[proxies]]
+name = "orders_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11504
+remotePort = 11504
+
+[[proxies]]
+name = "maket_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11510
+remotePort = 11510
