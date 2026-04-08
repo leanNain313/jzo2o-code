@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.jzo2o.api.publics.SmsCodeApi;
 import com.jzo2o.api.publics.WechatApi;
 import com.jzo2o.api.publics.dto.response.OpenIdResDTO;
@@ -13,6 +14,7 @@ import com.jzo2o.common.constants.UserType;
 import com.jzo2o.common.enums.SmsBussinessTypeEnum;
 import com.jzo2o.common.expcetions.BadRequestException;
 import com.jzo2o.common.expcetions.CommonException;
+import com.jzo2o.common.expcetions.ForbiddenOperationException;
 import com.jzo2o.common.utils.JwtTool;
 import com.jzo2o.common.utils.StringUtils;
 import com.jzo2o.customer.model.domain.CommonUser;
@@ -39,6 +41,9 @@ public class ILoginServiceImpl implements ILoginService {
 
     @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private ICommonUserService iCommonUserService;
 
     @Resource
     private IServeProviderService serveProviderService;
@@ -128,6 +133,48 @@ public class ILoginServiceImpl implements ILoginService {
 
         //构建token
         String token = jwtTool.createToken(commonUser.getId(), commonUser.getNickname(), commonUser.getAvatar(), UserType.C_USER);
+        return new LoginResDTO(token);
+    }
+
+    @Override
+    public LoginResDTO loginForUser(LoginForWorkReqDTO loginForWorkReqDTO) {
+        // 数据校验
+        if(StringUtils.isEmpty(loginForWorkReqDTO.getVeriryCode())){
+            throw new BadRequestException("验证码错误，请重新获取");
+        }
+        //远程调用publics服务校验验证码是否正确
+        boolean verifyResult = smsCodeApi.verify(loginForWorkReqDTO.getPhone(), SmsBussinessTypeEnum.USER, loginForWorkReqDTO.getVeriryCode()).getIsSuccess();
+        if(!verifyResult) {
+            throw new BadRequestException("验证码错误，请重新获取");
+        }
+        // 登录校验
+        if (StrUtil.isEmpty(loginForWorkReqDTO.getPhone())) {
+            throw new ForbiddenOperationException("手机号为空");
+        }
+        // 根据手机号和用户类型获取服务人员或机构信息
+        CommonUser commonUser = commonUserService.lambdaQuery()
+                .eq(CommonUser::getPhone, loginForWorkReqDTO.getPhone())
+                .one();
+        // 账号禁用校验
+        if(commonUser != null && CommonStatusConstants.USER_STATUS_FREEZE == commonUser.getStatus()) {
+            throw new CommonException(ErrorInfo.Code.ACCOUNT_FREEZED, commonUser.getAccountLockReason());
+        }
+        // 自动注册
+        if (ObjectUtil.isEmpty(commonUser)) {
+            commonUser = BeanUtil.copyProperties(loginForWorkReqDTO, CommonUser.class);
+            int i = RandomUtil.randomInt(10000000, 100000000);
+            String username = "用户" + i;
+            commonUser.setStatus(CommonStatusConstants.USER_STATUS_NORMAL);
+            commonUser.setNickname(username);
+            commonUser.setPhone(loginForWorkReqDTO.getPhone());
+            boolean save = commonUserService.save(commonUser);
+            if (!save) {
+                throw new ForbiddenOperationException("登录失败，请稍后重试");
+            }
+        }
+
+        // 生成登录token
+        String token = jwtTool.createToken(commonUser.getId(), commonUser.getNickname(), commonUser.getAvatar(), loginForWorkReqDTO.getUserType());
         return new LoginResDTO(token);
     }
 }

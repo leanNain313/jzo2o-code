@@ -1,0 +1,13 @@
+[Unit]
+Description=FRP Server
+After=network.target
+
+[Service]
+ExecStart=/www/network/service/frps -c /www/network/service/frps.toml
+Restart=always
+StandardOutput=file:/www/network/service/frps.log
+StandardError=file:/www/network/service/frps.err.log
+
+[Install]
+WantedBy=multi-user.target
+

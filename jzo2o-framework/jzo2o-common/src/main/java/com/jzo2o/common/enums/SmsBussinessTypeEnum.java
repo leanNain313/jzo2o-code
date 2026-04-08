@@ -6,7 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SmsBussinessTypeEnum {
-    INSTITION_REGISTER(1), INSTITUTION_RESET_PASSWORD(2), SERVE_STAFF_LOGIN(3);
+    INSTITION_REGISTER(1), INSTITUTION_RESET_PASSWORD(2), SERVE_STAFF_LOGIN(3),
+    USER(4);
 
     private int type;
 }

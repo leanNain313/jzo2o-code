@@ -38,6 +38,15 @@ public class LoginController {
     }
 
     /**
+     * 用户手机号登录
+     */
+    @PostMapping("/user")
+    @ApiOperation("用户使用手机号进行登录")
+    public LoginResDTO loginForUser(@RequestBody LoginForWorkReqDTO loginForWorkReqDTO) {
+        return loginService.loginForUser(loginForWorkReqDTO);
+    }
+
+    /**
      * c端用户登录接口
      */
     @PostMapping("/common/user")
