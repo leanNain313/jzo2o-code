@@ -312,6 +312,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         }
         // 发送请求
         SearchResponse searchResponse;
+        request.source().query(boolQueryBuilder);
         try {
             searchResponse = client.search(request, RequestOptions.DEFAULT);
         } catch (IOException e) {

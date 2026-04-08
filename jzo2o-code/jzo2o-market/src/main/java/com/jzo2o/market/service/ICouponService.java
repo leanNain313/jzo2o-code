@@ -32,4 +32,14 @@ public interface ICouponService extends IService<Coupon> {
     void processExpireCoupon();
 
     void seizeCoupon(SeizeCouponReqDTO seizeCouponReqDTO);
+
+    /**
+     * 我的优惠券列表
+     *
+     * @param lastId 最后一个优惠券id
+     * @param userId 用户id
+     * @param status 状态
+     * @return 优惠券列表
+     */
+    List<CouponInfoResDTO> queryForList(Long lastId, Long userId, Integer status);
 }

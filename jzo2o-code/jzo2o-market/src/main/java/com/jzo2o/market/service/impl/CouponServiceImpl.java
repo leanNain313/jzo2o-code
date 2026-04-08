@@ -160,4 +160,24 @@ public class CouponServiceImpl extends ServiceImpl<CouponMapper, Coupon> impleme
             throw new CommonException(SEIZE_COUPON_FAILD, "抢券失败");
         }
     }
+
+    /**
+     * 我的优惠券列表
+     *
+     * @param lastId 最后一个优惠券id
+     * @param userId 用户id
+     * @param status 状态
+     * @return 优惠券列表
+     */
+    @Override
+    public List<CouponInfoResDTO> queryForList(Long lastId, Long userId, Integer status) {
+        List<Coupon> list = this.lambdaQuery()
+                .eq(Coupon::getStatus, status)
+                .eq(Coupon::getUserId, userId)
+                .lt(lastId != null, Coupon::getId, lastId)
+                .orderByDesc(Coupon::getCreateTime)
+                .last("limit 10")
+                .list();
+        return BeanUtils.copyToList(list, CouponInfoResDTO.class);
+    }
 }

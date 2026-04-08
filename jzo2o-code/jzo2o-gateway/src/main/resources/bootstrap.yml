@@ -102,10 +102,12 @@ jzo2o:
   access-path-white-list:
     - /foundations/open/login
     - /customer/open/login/worker
+    - /customer/open/login/user
     - /customer/open/login/common/user
     - /customer/open/serve-provider/institution/register
     - /v3/api-docs/swagger-config
     - /doc.html
+    - /customer/v2/api-docs
     - /operation/v2/api-docs
     - /orders-dispatch/v2/api-docs
     - /orders-manager/v2/api-docs
