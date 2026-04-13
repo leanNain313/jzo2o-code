@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-customer-backup.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-customer.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-foundations.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-health.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-market.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-orders-0.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-orders-1.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-orders-2.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-orders-history.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-orders.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/jzo2o-trade.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/nacos-1.4.1.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/seata.sql" dialect="MySQL" />
+    <file url="file://$USER_HOME$/Desktop/数据库迁移/xxl_job_2.3.1.sql" dialect="MySQL" />
+  </component>
+</project>

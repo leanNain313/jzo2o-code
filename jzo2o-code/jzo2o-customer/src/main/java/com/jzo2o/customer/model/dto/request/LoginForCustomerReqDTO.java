@@ -13,7 +13,7 @@ public class LoginForCustomerReqDTO {
     /**
      * 微信授权code
      */
-    @ApiModelProperty(value = "微信授权code,app为验证码", required = true)
+    @ApiModelProperty(value = "微信授权code", required = true)
     private String code;
 
     /**
@@ -29,7 +29,8 @@ public class LoginForCustomerReqDTO {
     private String avatar;
 
     /**
-     * 登录人
+     * 用户类型
      */
+    @ApiModelProperty("头像")
     private String type;
 }

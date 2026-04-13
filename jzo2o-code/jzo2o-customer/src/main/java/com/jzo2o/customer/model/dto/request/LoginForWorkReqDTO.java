@@ -25,6 +25,6 @@ public class LoginForWorkReqDTO {
     /**
      * 登录用户类型
      */
-    @ApiModelProperty("服务人员类型,2.普通服务人员，3：机构用户, 4:普通用户")
+    @ApiModelProperty("服务人员类型,2.普通服务人员，3：机构用户")
     private Integer userType;
 }
