@@ -42,4 +42,27 @@ public interface ICouponService extends IService<Coupon> {
      * @return 优惠券列表
      */
     List<CouponInfoResDTO> queryForList(Long lastId, Long userId, Integer status);
+
+    /**
+     * 获取可用优惠券列表
+     *
+     * @param totalAmount 订单总金额
+     * @return 可用的优惠券列表
+     */
+    List<AvailableCouponsResDTO> getAvailable(BigDecimal totalAmount);
+
+    /**
+     * 核销优惠券
+     *
+     * @param couponUseReqDTO 优惠券对象
+     * @return 实际使用金额
+     */
+    CouponUseResDTO use(CouponUseReqDTO couponUseReqDTO);
+
+    /**
+     * 退回优惠券
+     *
+     * @param couponUseBackReqDTO 优惠券
+     */
+    void useBack(CouponUseBackReqDTO couponUseBackReqDTO);
 }
