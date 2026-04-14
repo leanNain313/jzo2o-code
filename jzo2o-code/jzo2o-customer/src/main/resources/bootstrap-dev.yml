@@ -10,7 +10,7 @@ spring:
       discovery:
         namespace: 75a593f5-33e6-4c65-b2a0-18c403d20f63
         ip: ${ACCESS_IP:}
-
+xxl-job-port: 11602
 #################     日志配置     #################
 logging:
   level:

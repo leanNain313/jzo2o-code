@@ -3,6 +3,7 @@ package com.jzo2o.orders.manager.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.DbRuntimeException;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,6 +19,7 @@ import com.jzo2o.api.customer.dto.response.AddressBookResDTO;
 import com.jzo2o.api.customer.dto.response.InstitutionStaffResDTO;
 import com.jzo2o.api.customer.dto.response.ServeProviderResDTO;
 import com.jzo2o.api.foundations.ServeApi;
+import com.jzo2o.api.foundations.dto.request.JudgeRequest;
 import com.jzo2o.api.foundations.dto.response.ServeAggregationResDTO;
 import com.jzo2o.api.market.CouponApi;
 import com.jzo2o.api.market.dto.request.CouponUseBackReqDTO;
@@ -181,7 +183,18 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
         if (serveResDTO == null || serveResDTO.getSaleStatus() != 2) {
             throw new BadRequestException("服务不可用");
         }
+        if (StrUtil.isEmpty(placeOrderReqDTO.getCityCode())) {
+            throw new ForbiddenOperationException("城市编码为空");
+        }
+        JudgeRequest request = new JudgeRequest();
+        request.setCityCode(placeOrderReqDTO.getCityCode());
+        request.setServeId(placeOrderReqDTO.getServeId());
+        Boolean b = serveApi.judgeServe(request);
+        if (BooleanUtils.isFalse(b)) {
+            throw new ForbiddenOperationException("当前城市还没有开通当前服务");
+        }
 
+        serveApi.placeOrder(placeOrderReqDTO.getServeId());
 
         // 2.下单前数据准备
         Orders orders = new Orders();
@@ -235,6 +248,14 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
         //排序字段
         long sortBy = DateUtils.toEpochMilli(orders.getServeStartTime()) + orders.getId() % 100000;
         orders.setSortBy(sortBy);
+        // 问题图片
+        if(StrUtil.isNotEmpty(placeOrderReqDTO.getQuestionImage())) {
+            orders.setQuestionImage(placeOrderReqDTO.getQuestionImage());
+        }
+        // 问题描述
+        if (StrUtil.isNotEmpty(placeOrderReqDTO.getQuestionDes())) {
+            orders.setQuestionDes(placeOrderReqDTO.getQuestionDes());
+        }
 
         // 使用优惠券下单
         if (ObjectUtils.isNotNull(placeOrderReqDTO.getCouponId())) {
@@ -245,16 +266,16 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
             owner.add(orders);
         }
         //TODO 暂时不需要支付
-        if (Boolean.FALSE.equals(openPay)) {
-            TradeStatusMsg msg = TradeStatusMsg.builder()
-                    .productOrderNo(orders.getId())
-                    .tradingChannel("WECHAT_PAY")
-                    .statusCode(TradingStateEnum.YJS.getCode())
-                    .tradingOrderNo(IdUtil.getSnowflakeNextId())
-                    .transactionId(IdUtils.getSnowflakeNextIdStr())
-                    .build();
-            paySuccess(msg);
-        }
+//        if (Boolean.FALSE.equals(openPay)) {
+//            TradeStatusMsg msg = TradeStatusMsg.builder()
+//                    .productOrderNo(orders.getId())
+//                    .tradingChannel("WECHAT_PAY")
+//                    .statusCode(TradingStateEnum.YJS.getCode())
+//                    .tradingOrderNo(IdUtil.getSnowflakeNextId())
+//                    .transactionId(IdUtils.getSnowflakeNextIdStr())
+//                    .build();
+//            paySuccess(msg);
+//        }
         return new PlaceOrderResDTO(orders.getId());
     }
 

@@ -10,7 +10,6 @@
         <module name="jzo2o-shardingsphere-jdbc" />
         <module name="jzo2o-xxl-job" />
         <module name="jzo2o-foundations" />
-        <module name="jzo2o-orders-dispatch" />
         <module name="jzo2o-statemachine" />
         <module name="jzo2o-mvc" />
         <module name="jzo2o-api" />
@@ -36,6 +35,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="jzo2o-orders-dispatch" target="11" />
       <module name="xxl-job" target="1.8" />
       <module name="xxl-job-admin" target="1.8" />
       <module name="xxl-job-core" target="1.8" />

@@ -28,6 +28,7 @@ import java.util.List;
 @RestController("consumerEvaluationController")
 @RequestMapping("/consumer/evaluation")
 @Api(tags = "用户端 - 评价相关接口")
+@Deprecated
 public class EvaluationController {
     @Resource
     private EvaluationService evaluationService;

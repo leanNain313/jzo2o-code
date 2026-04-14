@@ -3,6 +3,7 @@ package com.jzo2o.orders.base.model.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -205,6 +206,17 @@ public class Orders implements Serializable {
      * 支付渠道
      */
     private String tradingChannel;
+
+    /**
+     * 问题图片
+     */
+    private String questionImage;
+
+    /**
+     * 问题描述
+     */
+    private String questionDes;
+
 
 
 }

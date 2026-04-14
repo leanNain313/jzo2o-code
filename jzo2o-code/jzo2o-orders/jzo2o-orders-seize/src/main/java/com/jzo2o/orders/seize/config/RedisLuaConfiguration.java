@@ -20,4 +20,13 @@ public class RedisLuaConfiguration {
         redisScript.setResultType(Integer.class);
         return redisScript;
     }
+
+    @Bean("dispatchOrdersScript")
+    public DefaultRedisScript<String> dispatchOrdersScript() {
+        DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
+        //resource目录下的scripts文件下的dispatchOrdersScript.lua文件
+        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("scripts/dispatchOrdersScript.lua")));
+        redisScript.setResultType(String.class);
+        return redisScript;
+    }
 }

@@ -83,6 +83,7 @@ public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem
      */
     @Override
     @CachePut(value = RedisConstants.CacheName.SERVE_ITEM, key = "#id", unless = "#result.activeStatus != 2", cacheManager = RedisConstants.CacheManager.ONE_DAY)
+    @Transactional
     public ServeItem update(Long id, ServeItemUpsertReqDTO serveItemUpsertReqDTO) {
         //1.更新服务项
         ServeItem serveItem = BeanUtil.toBean(serveItemUpsertReqDTO, ServeItem.class);
@@ -95,6 +96,7 @@ public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem
         serveSyncUpdateReqDTO.setServeItemImg(serveItemUpsertReqDTO.getImg());
         serveSyncUpdateReqDTO.setServeItemIcon(serveItemUpsertReqDTO.getServeItemIcon());
         serveSyncUpdateReqDTO.setServeItemSortNum(serveItemUpsertReqDTO.getSortNum());
+        serveSyncUpdateReqDTO.setDescription(serveSyncUpdateReqDTO.getDescription());
         serveSyncService.updateByServeItemId(id, serveSyncUpdateReqDTO);
 
         //用于更新缓存

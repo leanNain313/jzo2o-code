@@ -111,5 +111,14 @@ public class ServeSync implements Serializable {
      */
     private String serveItemIcon;
 
+    /**
+     * 下单次数
+     */
+    private Long buyNum;
+
+    /**
+     * 服务描述
+     */
+    private String description;
 
 }

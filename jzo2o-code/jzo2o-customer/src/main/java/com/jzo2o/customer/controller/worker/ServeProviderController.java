@@ -1,14 +1,14 @@
 package com.jzo2o.customer.controller.worker;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.jzo2o.common.expcetions.ForbiddenOperationException;
+import com.jzo2o.customer.model.domain.ServeProvider;
 import com.jzo2o.customer.model.dto.response.ServeProviderInfoResDTO;
-import com.jzo2o.customer.model.dto.response.ServeProviderSettingsGetResDTO;
 import com.jzo2o.customer.service.IServeProviderService;
-import com.jzo2o.customer.service.IServeProviderSettingsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -28,5 +28,14 @@ public class ServeProviderController {
     @ApiOperation("获取当前用户信息")
     public ServeProviderInfoResDTO currentUserInfo() {
         return serveProviderService.currentUserInfo();
+    }
+
+    @GetMapping("/{id}")
+    public ServeProviderInfoResDTO getUserInfoById(@PathVariable Long id) {
+        if (id == null) {
+            throw new ForbiddenOperationException("服务人员id不能为空");
+        }
+        ServeProvider serveProvider = serveProviderService.getById(id);
+        return BeanUtil.copyProperties(serveProvider, ServeProviderInfoResDTO.class);
     }
 }

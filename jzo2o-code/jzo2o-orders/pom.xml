@@ -12,7 +12,6 @@
         <module>jzo2o-orders-seize</module>
         <module>jzo2o-orders-manager</module>
         <module>jzo2o-orders-base</module>
-        <module>jzo2o-orders-dispatch</module>
         <module>jzo2o-orders-history</module>
 
     </modules>

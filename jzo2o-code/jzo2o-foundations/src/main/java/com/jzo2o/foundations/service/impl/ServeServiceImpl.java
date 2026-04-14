@@ -66,6 +66,9 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
 
     @Autowired
     private RestHighLevelClient client;
+
+    @Autowired
+    private IServeService iServeService;
     /**
      * 根据区域id获取服务列表
      * @param request 请求参数
@@ -143,6 +146,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
      * @param id 服务id
      */
     @Override
+    @Transactional
     public void onSale(Long id) {
         // 1 区域服务当前非上架状态
         Serve serve = getById(id);
@@ -160,7 +164,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         update(updateWrapper);
 
         // 同步es
-        addServeSync(id);
+        iServeService.addServeSync(id);
     }
 
     /**
@@ -168,6 +172,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
      * @param id 服务id
      */
     @Override
+    @Transactional
     public void downSaleById(Long id) {
         // 1.区域服务当前为上架状态
         Serve serve = getById(id);
@@ -180,7 +185,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         update(updateWrapper);
 
         // 同步es
-        addServeSync(id);
+        serveSyncMapper.deleteById(id);
     }
 
     /**
@@ -347,7 +352,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
      *
      * @param serveId 服务id
      */
-    private void addServeSync(Long serveId) {
+    public void addServeSync(Long serveId) {
         //服务信息
         Serve serve = baseMapper.selectById(serveId);
         //区域信息
@@ -372,10 +377,45 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         serveSync.setUnit(serveItem.getUnit());
         serveSync.setDetailImg(serveItem.getDetailImg());
         serveSync.setPrice(serve.getPrice());
+        serveSync.setDescription(serveItem.getDescription());
 
         serveSync.setCityCode(region.getCityCode());
         serveSync.setId(serve.getId());
         serveSync.setIsHot(serve.getIsHot());
         serveSyncMapper.insert(serveSync);
+    }
+
+    @Override
+    @Transactional
+    public void placeOrder(Long id) {
+        serveMapper.placeOrder(id);
+        serveSyncMapper.placeOrder(id);
+    }
+
+    /**
+     * 首页服务项详情分页查询
+     * @param cityCode 城市编码
+     * @param pageNo 起始页
+     * @param pageSize 页面大小
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public PageResult<ServePageResponse> firstPage(String cityCode, Integer pageNo, Integer pageSize) throws IOException {
+        SearchRequest request = new SearchRequest("serve_aggregation");
+        request.source()
+                .query(QueryBuilders.termQuery("city_code", cityCode))
+                .sort("buy_num", SortOrder.DESC)
+                .from(pageNo)
+                .size(pageSize);
+
+        SearchResponse searchResponse = client.search(request, RequestOptions.DEFAULT);
+        PageResult<ServePageResponse> page = new PageResult<>();
+        List<ServePageResponse> collect = Arrays.stream(searchResponse.getHits().getHits())
+                .map(e -> JSONUtil.toBean(e.getSourceAsString(), ServePageResponse.class))
+                .collect(Collectors.toList());
+        page.setTotal(searchResponse.getHits().getTotalHits().value);
+        page.setList(collect);
+        return page;
     }
 }

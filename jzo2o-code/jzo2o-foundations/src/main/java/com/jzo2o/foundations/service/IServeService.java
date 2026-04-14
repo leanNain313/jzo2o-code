@@ -7,7 +7,9 @@ import com.jzo2o.foundations.model.domain.Serve;
 import com.jzo2o.foundations.model.dto.request.ServePageQueryReqDTO;
 import com.jzo2o.foundations.model.dto.request.ServeUpsertReqDTO;
 import com.jzo2o.foundations.model.dto.response.*;
+import io.swagger.models.auth.In;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -49,4 +51,10 @@ public interface IServeService extends IService<Serve> {
     List<ServeSimpleResDTO> search(String city, String keyword, Long serveTypeId);
 
     ServeAggregationResDTO findServeDetailById(Long id);
+
+    void addServeSync(Long serveId);
+
+    void placeOrder(Long id);
+
+    PageResult<ServePageResponse> firstPage(String cityCode, Integer page, Integer pageSize) throws IOException;
 }
