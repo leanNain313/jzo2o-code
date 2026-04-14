@@ -46,11 +46,17 @@ public class ServeProviderHandler extends AbstractCanalRabbitMqMsgListener<Serve
     @Override
     public void batchSave(List<ServeProviderSync> data) {
         List<ServeProviderInfo> serveProviderInfos = BeanUtils.copyToList(data, ServeProviderInfo.class, (sync, info) -> {
-            info.setLocation(new Location(sync.getLon(), sync.getLat()));
+            Double lon = sync.getLon();
+            Double lat = sync.getLat();
+
+            if (lon != null && lat != null) {
+                info.setLocation(new Location(lon, lat));
+            }
         });
         log.debug("serveProviderInfos : {}", serveProviderInfos);
 
         if(!elasticSearchTemplate.opsForDoc().batchUpsert(EsIndexConstants.SERVE_PROVIDER_INFO, serveProviderInfos)){
+            log.error("同步失败");
             throw new CommonException("服务人员或机构信息同步异常");
         }
     }
