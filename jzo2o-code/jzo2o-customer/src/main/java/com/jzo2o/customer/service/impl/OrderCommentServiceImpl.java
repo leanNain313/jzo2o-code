@@ -29,17 +29,17 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 /**
- * Order comment service implementation.
+ * 订单评论服务实现类
  */
 @Service
 public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, OrderComment> implements IOrderCommentService {
     /**
-     * Order status: waiting for evaluation.
+     * 订单状态：待评价
      */
     private static final int ORDER_STATUS_WAITING_EVALUATION = 400;
 
     /**
-     * Evaluation status: already evaluated.
+     * 评价状态：已评价
      */
     private static final int EVALUATION_STATUS_EVALUATED = 1;
 
@@ -52,29 +52,32 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
     @Resource
     private ICommonUserService commonUserService;
 
+    /**
+     * 根据订单id评论服务
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void commentByOrderId(OrderCommentCreateReqDTO reqDTO) {
         OrderComment existComment = this.getById(reqDTO.getOrderId());
         if (ObjectUtil.isNotNull(existComment)) {
-            throw new BadRequestException("This order has already been commented");
+            throw new BadRequestException("该订单已评论，请勿重复提交");
         }
 
         OrderResDTO order = ordersApi.queryById(reqDTO.getOrderId());
         if (ObjectUtil.isNull(order)) {
-            throw new BadRequestException("Order does not exist");
+            throw new BadRequestException("订单不存在");
         }
 
         if (ObjectUtil.notEqual(order.getOrdersStatus(), ORDER_STATUS_WAITING_EVALUATION)) {
-            throw new ForbiddenOperationException("Only orders waiting for evaluation can be commented");
+            throw new ForbiddenOperationException("非待评价状态不可评价");
         }
 
         if (ObjectUtil.equal(order.getEvaluationStatus(), EVALUATION_STATUS_EVALUATED)) {
-            throw new BadRequestException("This order has already been evaluated");
+            throw new BadRequestException("该订单已评价");
         }
 
         if (ObjectUtil.notEqual(order.getServeItemId(), reqDTO.getServeItemId())) {
-            throw new BadRequestException("serveItemId does not match this order");
+            throw new BadRequestException("服务项id与订单不匹配");
         }
 
         Long currentUserId = UserContext.currentUserId();
@@ -101,10 +104,13 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
 
         this.save(orderComment);
 
-        // Keep order evaluation status in sync.
+        // 订单评价状态同步为已评价
         ordersApi.evaluate(reqDTO.getOrderId());
     }
 
+    /**
+     * 根据服务项id分页获取评论
+     */
     @Override
     public PageResult<OrderCommentPageResDTO> pageByServeItemId(OrderCommentPageReqDTO reqDTO) {
         Page<OrderComment> page = PageUtils.parsePageQuery(reqDTO, OrderComment.class);
@@ -120,6 +126,9 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
         });
     }
 
+    /**
+     * 根据评论id删除评论
+     */
     @Override
     public void deleteByCommentId(OrderCommentDeleteReqDTO reqDTO) {
         OrderComment orderComment = this.getById(reqDTO.getCommentId());
@@ -128,7 +137,7 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
         }
 
         if (ObjectUtil.notEqual(orderComment.getUserId(), UserContext.currentUserId())) {
-            throw new ForbiddenOperationException("You can only delete your own comments");
+            throw new ForbiddenOperationException("只能删除自己发布的评论");
         }
 
         this.removeById(reqDTO.getCommentId());

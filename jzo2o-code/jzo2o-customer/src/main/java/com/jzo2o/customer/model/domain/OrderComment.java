@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Order comment entity.
+ * 订单评论实体
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -25,66 +25,66 @@ public class OrderComment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Order id, also primary key.
+     * 订单ID（主键）
      */
     @TableId(value = "order_id", type = IdType.INPUT)
     private Long orderId;
 
     /**
-     * Serve item id.
+     * 服务项ID
      */
     @TableField("serve_item_id")
     private Long serveItemId;
 
     /**
-     * Comment content.
+     * 评论内容
      */
     private String content;
 
     /**
-     * Comment user id.
+     * 评论人ID
      */
     @TableField("user_id")
     private Long userId;
 
     /**
-     * Comment user name.
+     * 评论人名称
      */
     @TableField("user_name")
     private String userName;
 
     /**
-     * Comment user avatar.
+     * 评论人头像
      */
     @TableField("user_avatar")
     private String userAvatar;
 
     /**
-     * Comment image list.
+     * 评价图片列表
      */
     @TableField(value = "image_list", typeHandler = JacksonTypeHandler.class)
     private List<String> imageList;
 
     /**
-     * Staff id.
+     * 服务人员ID
      */
     @TableField("staff_id")
     private Long staffId;
 
     /**
-     * Service score, range 1~5.
+     * 服务评分（1~5）
      */
     @TableField("service_score")
     private Integer serviceScore;
 
     /**
-     * Create time.
+     * 创建时间
      */
     @TableField("created_at")
     private LocalDateTime createdAt;
 
     /**
-     * Update time.
+     * 更新时间
      */
     @TableField("updated_at")
     private LocalDateTime updatedAt;

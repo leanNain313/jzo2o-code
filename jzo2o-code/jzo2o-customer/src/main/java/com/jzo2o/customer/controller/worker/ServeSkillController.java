@@ -3,6 +3,10 @@ package com.jzo2o.customer.controller.worker;
 
 import com.jzo2o.api.foundations.dto.response.ServeItemSimpleResDTO;
 import com.jzo2o.api.foundations.dto.response.ServeTypeSimpleResDTO;
+import com.jzo2o.common.model.PageResult;
+import com.jzo2o.customer.model.domain.ServeSkill;
+import com.jzo2o.customer.model.dto.request.AuditPageRequest;
+import com.jzo2o.customer.model.dto.request.AuditRequest;
 import com.jzo2o.customer.model.dto.request.ServeSkillAddReqDTO;
 import com.jzo2o.customer.model.dto.response.ServeSkillCategoryResDTO;
 import com.jzo2o.customer.service.IServeSkillService;
@@ -28,10 +32,37 @@ public class ServeSkillController {
     @Resource
     private IServeSkillService serveSkillService;
 
+    @Deprecated
     @PostMapping("/batchUpsert")
     @ApiOperation("批量新增或修改服务技能")
     public void listServeType(@RequestBody List<ServeSkillAddReqDTO> serveSkillAddReqDTOList) {
         serveSkillService.batchUpsert(serveSkillAddReqDTOList);
+    }
+
+    /**
+     * 发送添加技能申请
+     * @param request 请求参数
+     */
+    @ApiOperation("发送添加技能申请")
+    @PostMapping("/send/audit")
+    public void sendAudit(@RequestBody ServeSkillAddReqDTO request) {
+        serveSkillService.sendAudit(request);
+    }
+
+    /**
+     * 审核服务人员技能
+     * @param request 请求参数
+     */
+    @ApiOperation("审核服务人员技能")
+    @PostMapping("/message/audit")
+    public void messageAudit(@RequestBody AuditRequest request) {
+        serveSkillService.messageAudit(request);
+    }
+
+    @ApiOperation("服务人员技能审核分页")
+    @GetMapping("/page")
+    public PageResult<ServeSkill> skillPage(AuditPageRequest request) {
+        return serveSkillService.skillPage(request);
     }
 
     @GetMapping("/category")

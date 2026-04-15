@@ -8,33 +8,33 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Comment page response item.
+ * 评论分页查询返回体
  */
 @Data
-@ApiModel("Order comment page response")
+@ApiModel("评论分页查询返回体")
 public class OrderCommentPageResDTO {
 
-    @ApiModelProperty("Comment content")
+    @ApiModelProperty("评论内容")
     private String content;
 
-    @ApiModelProperty("Comment user id")
+    @ApiModelProperty("评论人ID")
     private Long userId;
 
-    @ApiModelProperty("Comment user name")
+    @ApiModelProperty("评论人名称")
     private String userName;
 
-    @ApiModelProperty("Comment user avatar")
+    @ApiModelProperty("评论人头像URL")
     private String userAvatar;
 
-    @ApiModelProperty("Service score")
+    @ApiModelProperty("服务评分")
     private Integer serviceScore;
 
-    @ApiModelProperty("Create time")
+    @ApiModelProperty("创建时间")
     private LocalDateTime createdAt;
 
-    @ApiModelProperty("Comment image list")
+    @ApiModelProperty("评价图片列表（JSON数组）")
     private List<String> imageList;
 
-    @ApiModelProperty("Order id (primary key)")
+    @ApiModelProperty("订单ID（主键）")
     private Long orderId;
 }

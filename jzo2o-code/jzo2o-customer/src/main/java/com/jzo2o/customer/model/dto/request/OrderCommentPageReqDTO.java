@@ -9,14 +9,14 @@ import lombok.EqualsAndHashCode;
 import javax.validation.constraints.NotNull;
 
 /**
- * Page query request for comments by serve item id.
+ * 根据服务项分页查询评论请求体
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel("Page query order comments by serve item")
+@ApiModel("根据服务项分页查询评论请求体")
 public class OrderCommentPageReqDTO extends PageQueryDTO {
 
-    @NotNull(message = "serveItemId cannot be null")
+    @NotNull(message = "服务项id不能为空")
     @ApiModelProperty(value = "服务项id", required = true)
     private Long serveItemId;
 }

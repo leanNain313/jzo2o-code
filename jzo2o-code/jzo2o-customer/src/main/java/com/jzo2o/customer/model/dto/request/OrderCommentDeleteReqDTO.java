@@ -7,13 +7,13 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 /**
- * Delete comment request.
+ * 根据订单id删除评论请求体
  */
 @Data
-@ApiModel("Delete order comment request")
+@ApiModel("根据订单id删除评论请求体")
 public class OrderCommentDeleteReqDTO {
 
-    @NotNull(message = "commentId cannot be null")
-    @ApiModelProperty(value = "Comment id (same as order_id primary key)", required = true)
+    @NotNull(message = "评论id不能为空")
+    @ApiModelProperty(value = "评论id（即order_id主键）", required = true)
     private Long commentId;
 }

@@ -11,30 +11,30 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
- * Create comment request.
+ * 根据订单发表评论请求体
  */
 @Data
-@ApiModel("Create order comment request")
+@ApiModel("根据订单发表评论请求体")
 public class OrderCommentCreateReqDTO {
 
-    @NotNull(message = "orderId cannot be null")
-    @ApiModelProperty(value = "Order id", required = true)
+    @NotNull(message = "订单id不能为空")
+    @ApiModelProperty(value = "订单id", required = true)
     private Long orderId;
 
-    @NotNull(message = "serviceScore cannot be null")
-    @Min(value = 1, message = "serviceScore must be >= 1")
-    @Max(value = 5, message = "serviceScore must be <= 5")
-    @ApiModelProperty(value = "Service score, range 1~5", required = true)
+    @NotNull(message = "评论分数不能为空")
+    @Min(value = 1, message = "评论分数不能小于1")
+    @Max(value = 5, message = "评论分数不能大于5")
+    @ApiModelProperty(value = "评论分数（1~5）", required = true)
     private Integer serviceScore;
 
-    @ApiModelProperty(value = "Comment image list")
+    @ApiModelProperty(value = "评论图片列表")
     private List<String> imageList;
 
-    @Size(max = 2000, message = "content length cannot exceed 2000")
-    @ApiModelProperty(value = "Comment content")
+    @Size(max = 2000, message = "评论内容长度不能超过2000")
+    @ApiModelProperty(value = "评论内容")
     private String content;
 
-    @NotNull(message = "serveItemId cannot be null")
-    @ApiModelProperty(value = "Serve item id", required = true)
+    @NotNull(message = "服务项id不能为空")
+    @ApiModelProperty(value = "服务项id", required = true)
     private Long serveItemId;
 }

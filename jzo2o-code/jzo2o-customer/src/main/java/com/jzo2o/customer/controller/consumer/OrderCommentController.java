@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * Order comment related APIs.
+ * 订单评论相关接口
  */
 @RestController("consumerOrderCommentController")
 @RequestMapping("/consumer/order-comment")
-@Api(tags = "Consumer - Order comment APIs")
+@Api(tags = "用户端 - 订单评论相关接口")
 @Validated
 public class OrderCommentController {
 
@@ -33,24 +33,24 @@ public class OrderCommentController {
     private IOrderCommentService orderCommentService;
 
     @PostMapping
-    @ApiOperation("发布评论")
+    @ApiOperation("根据订单id评论服务")
     public void commentByOrderId(@Validated @RequestBody OrderCommentCreateReqDTO reqDTO) {
         orderCommentService.commentByOrderId(reqDTO);
     }
 
     @GetMapping("/pageByServeItemId")
-    @ApiOperation("根据服务项id获取评论分页")
+    @ApiOperation("根据服务项id分页获取评论")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNo", value = "Start page number", required = true, dataTypeClass = Integer.class),
-            @ApiImplicitParam(name = "pageSize", value = "Page size", required = true, dataTypeClass = Integer.class),
-            @ApiImplicitParam(name = "serveItemId", value = "Serve item id", required = true, dataTypeClass = Long.class)
+            @ApiImplicitParam(name = "pageNo", value = "起始页", required = true, dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "pageSize", value = "页面大小", required = true, dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "serveItemId", value = "服务项id", required = true, dataTypeClass = Long.class)
     })
     public PageResult<OrderCommentPageResDTO> pageByServeItemId(@Validated OrderCommentPageReqDTO reqDTO) {
         return orderCommentService.pageByServeItemId(reqDTO);
     }
 
     @DeleteMapping
-    @ApiOperation("根据id删除评论")
+    @ApiOperation("根据订单id删除评论")
     public void deleteByCommentId(@Validated @RequestBody OrderCommentDeleteReqDTO reqDTO) {
         orderCommentService.deleteByCommentId(reqDTO);
     }

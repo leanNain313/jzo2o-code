@@ -30,4 +30,10 @@ public class ServeSkillItemResDTO {
      */
     @ApiModelProperty("是否被选中")
     private Boolean isSelected;
+
+    @ApiModelProperty("审核状态")
+    private String auditStatus;
+
+    @ApiModelProperty("audit status code")
+    private Integer auditStatusCode;
 }
