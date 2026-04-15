@@ -3,6 +3,7 @@ package com.jzo2o.orders.base.model.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -74,12 +75,12 @@ public class Orders implements Serializable {
     private Long serveId;
 
     /**
-     * 订单状态，0：待支付，100：派单中，200：待服务，300：服务中，400：待评价，500：订单完成，600：已取消，700：已关闭
+     * 订单状态，0：待支付，100：派单中，200：待服务，300：服务中，500：订单完成，600：已取消，700：已关闭
      */
     private Integer ordersStatus;
 
     /**
-     * 交易状态，2：待支付，4：支付成功
+     * 交易状态，0：待支付，1：支付成功
      */
     private Integer payStatus;
 
@@ -157,11 +158,20 @@ public class Orders implements Serializable {
      * 评价时间
      */
     private LocalDateTime evaluationTime;
+    /**
+     * 评价状态
+     */
+    private Integer evaluationStatus;
 
     /**
      * 用户端是否展示，1：展示，0：隐藏
      */
     private Integer display;
+
+    /**
+     * 实际服务完成时间
+     */
+    private LocalDateTime realServeEndTime;
 
     /**
      * 排序字段（serve_start_time秒级时间戳+订单id后6位）
@@ -196,6 +206,17 @@ public class Orders implements Serializable {
      * 支付渠道
      */
     private String tradingChannel;
+
+    /**
+     * 问题图片
+     */
+    private String questionImage;
+
+    /**
+     * 问题描述
+     */
+    private String questionDes;
+
 
 
 }

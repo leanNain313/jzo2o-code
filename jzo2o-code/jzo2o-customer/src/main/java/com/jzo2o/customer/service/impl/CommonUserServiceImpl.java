@@ -12,12 +12,15 @@ import com.jzo2o.api.customer.dto.response.CommonUserResDTO;
 import com.jzo2o.api.orders.OrdersApi;
 import com.jzo2o.api.publics.WechatApi;
 import com.jzo2o.api.publics.dto.response.PhoneResDTO;
+import com.jzo2o.common.expcetions.ForbiddenOperationException;
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.mapper.CommonUserMapper;
 import com.jzo2o.customer.model.domain.CommonUser;
+import com.jzo2o.customer.model.dto.request.UpdateUserRequest;
 import com.jzo2o.customer.service.ICommonUserService;
 import com.jzo2o.mvc.utils.UserContext;
 import com.jzo2o.mysql.utils.PageUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -88,5 +91,16 @@ public class CommonUserServiceImpl extends ServiceImpl<CommonUserMapper, CommonU
     public void updateStatus(CommonUserUpdateReqDTO commonUserUpdateReqDTO) {
         CommonUser commonUser = BeanUtil.toBean(commonUserUpdateReqDTO, CommonUser.class);
         commonUserMapper.updateById(commonUser);
+    }
+
+    @Override
+    public void updateUserMessage(UpdateUserRequest request) {
+        request.setId(UserContext.currentUserId());
+        CommonUser commonUser = commonUserMapper.selectById(request.getId());
+        if (commonUser == null) {
+            throw new ForbiddenOperationException("该用户不存在");
+        }
+        CommonUser user = BeanUtil.copyProperties(request, CommonUser.class);
+        commonUserMapper.updateById(user);
     }
 }

@@ -26,4 +26,14 @@ public class PlaceOrderReqDTO {
 
     @ApiModelProperty(value = "优惠券id", required = false)
     private Long couponId;
+
+    @ApiModelProperty(value = "城市编码", required = true)
+    private String cityCode;
+
+    @ApiModelProperty(value = "问题图片", required = false)
+    private String questionImage;
+
+    @ApiModelProperty(value = "问题描述", required = false)
+    private String questionDes;
+
 }

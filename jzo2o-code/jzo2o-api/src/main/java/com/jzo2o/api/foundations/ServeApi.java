@@ -1,10 +1,9 @@
 package com.jzo2o.api.foundations;
 
+import com.jzo2o.api.foundations.dto.request.JudgeRequest;
 import com.jzo2o.api.foundations.dto.response.ServeAggregationResDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -13,5 +12,11 @@ public interface ServeApi {
 
     @GetMapping("/{id}")
     ServeAggregationResDTO findById(@PathVariable("id") Long id);
+
+    @PostMapping("/region")
+    Boolean judgeServe(@RequestBody JudgeRequest request);
+
+    @PostMapping("/place/{id}")
+    public void placeOrder(@PathVariable Long id);
 
 }

@@ -55,4 +55,9 @@ public class ServeSyncUpdateReqDTO {
      */
     private Integer unit;
 
+    /**
+     * 服务描述
+     */
+    private String description;
+
 }

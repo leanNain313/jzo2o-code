@@ -29,7 +29,8 @@ public class LoginForCustomerReqDTO {
     private String avatar;
 
     /**
-     * 登录人
+     * 用户类型
      */
+    @ApiModelProperty("头像")
     private String type;
 }

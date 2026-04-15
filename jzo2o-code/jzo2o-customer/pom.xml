@@ -15,14 +15,12 @@
 
     </parent>
 
-
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -69,23 +67,23 @@
         </dependency>
 
         <!--canal-->
-<!--        <dependency>-->
-<!--            <groupId>com.jzo2o</groupId>-->
-<!--            <artifactId>jzo2o-canal-sync</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.jzo2o</groupId>-->
-<!--            <artifactId>jzo2o-es</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.jzo2o</groupId>
+            <artifactId>jzo2o-canal-sync</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jzo2o</groupId>
+            <artifactId>jzo2o-es</artifactId>
+        </dependency>
         <dependency>
             <groupId>cn.xiaozhibang</groupId>
             <artifactId>evaluation-sdk</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.jzo2o</groupId>-->
-<!--            <artifactId>jzo2o-xxl-job</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.jzo2o</groupId>
+            <artifactId>jzo2o-xxl-job</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -107,6 +105,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

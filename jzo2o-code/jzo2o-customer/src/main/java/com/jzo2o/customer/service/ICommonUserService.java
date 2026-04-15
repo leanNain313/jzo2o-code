@@ -6,6 +6,7 @@ import com.jzo2o.api.customer.dto.response.CommonUserResDTO;
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.model.domain.CommonUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jzo2o.customer.model.dto.request.UpdateUserRequest;
 
 /**
  * <p>
@@ -40,4 +41,6 @@ public interface ICommonUserService extends IService<CommonUser> {
      * @param commonUserUpdateReqDTO 更新信息
      */
     void updateStatus(CommonUserUpdateReqDTO commonUserUpdateReqDTO);
+
+    void updateUserMessage(UpdateUserRequest request);
 }

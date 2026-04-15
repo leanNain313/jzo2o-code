@@ -7,7 +7,10 @@
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-market/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders-base/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders-dispatch/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders-history/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders-manager/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders-seize/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders/jzo2o-orders-base/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders/jzo2o-orders-manager/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jzo2o-code/jzo2o-orders/jzo2o-orders/src/main/java" charset="UTF-8" />

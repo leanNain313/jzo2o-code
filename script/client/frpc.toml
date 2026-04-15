@@ -59,3 +59,45 @@ type = "tcp"
 localIP = "127.0.0.1"
 localPort = 11510
 remotePort = 11510
+
+[[proxies]]
+name = "xxl-job-market"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11610
+remotePort = 11610
+
+[[proxies]]
+name = "xxl-job-foundations_module"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11609
+remotePort = 11609
+
+[[proxies]]
+name = "xxl-job-trade"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11605
+remotePort = 11605
+
+[[proxies]]
+name = "xxl-job-sezie"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11606
+remotePort = 11606
+
+[[proxies]]
+name = "xxl-job-manager"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11604
+remotePort = 11604
+
+[[proxies]]
+name = "xxl-job-customer"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 11602
+remotePort = 11602

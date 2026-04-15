@@ -2,7 +2,10 @@ package com.jzo2o.customer.service;
 
 import com.jzo2o.api.foundations.dto.response.ServeItemSimpleResDTO;
 import com.jzo2o.api.foundations.dto.response.ServeTypeSimpleResDTO;
+import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.model.domain.ServeSkill;
+import com.jzo2o.customer.model.dto.request.AuditPageRequest;
+import com.jzo2o.customer.model.dto.request.AuditRequest;
 import com.jzo2o.customer.model.dto.request.ServeSkillAddReqDTO;
 import com.jzo2o.customer.model.dto.response.ServeSkillCategoryResDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -56,4 +59,17 @@ public interface IServeSkillService extends IService<ServeSkill> {
      * @return 技能列表
      */
     List<ServeItemSimpleResDTO> queryCurrentUserServeSkillItemList();
+
+    void sendAudit(ServeSkillAddReqDTO request);
+
+    void messageAudit(AuditRequest request);
+
+    /**
+     * 同步到技能表
+     * @param id 审核id
+     * @param staffId 服务人员id
+     */
+    void skillSetting(Long id, Long staffId);
+
+    PageResult<ServeSkill> skillPage(AuditPageRequest request);
 }

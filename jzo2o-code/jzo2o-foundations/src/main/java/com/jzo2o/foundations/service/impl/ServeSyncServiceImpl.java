@@ -7,6 +7,7 @@ import com.jzo2o.foundations.mapper.ServeSyncMapper;
 import com.jzo2o.foundations.model.domain.ServeSync;
 import com.jzo2o.foundations.model.dto.request.ServeSyncUpdateReqDTO;
 import com.jzo2o.foundations.service.IServeSyncService;
+import org.elasticsearch.core.Set;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,7 +34,8 @@ public class ServeSyncServiceImpl extends ServiceImpl<ServeSyncMapper, ServeSync
                 .set(ServeSync::getServeItemSortNum, serveSyncUpdateReqDTO.getServeItemSortNum())
                 .set(ServeSync::getUnit, serveSyncUpdateReqDTO.getUnit())
                 .set(ServeSync::getServeItemImg, serveSyncUpdateReqDTO.getServeItemImg())
-                .set(ServeSync::getServeItemIcon, serveSyncUpdateReqDTO.getServeItemIcon());
+                .set(ServeSync::getServeItemIcon, serveSyncUpdateReqDTO.getServeItemIcon())
+                .set(ServeSync::getDescription, serveSyncUpdateReqDTO.getDescription());
         super.update(updateWrapper);
     }
 

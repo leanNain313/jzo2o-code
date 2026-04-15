@@ -8,6 +8,7 @@ import com.jzo2o.foundations.model.dto.response.ServeAggregationTypeSimpleResDTO
 import com.jzo2o.foundations.model.dto.response.ServeCategoryResDTO;
 import com.jzo2o.foundations.model.dto.response.ServeResDTO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -36,4 +37,8 @@ public interface ServeMapper extends BaseMapper<Serve> {
     List<ServeAggregationTypeSimpleResDTO> findServeTypeListByRegionId(Long regionId);
 
     ServeAggregationResDTO findServeDetailById(Long id);
+
+    @Update("update serve set buy_num =buy_num + 1 where id = #{id}")
+    void placeOrder(Long id);
+
 }

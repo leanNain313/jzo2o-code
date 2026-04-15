@@ -43,4 +43,5 @@ public class ServeSimpleResDTO {
      */
     @ApiModelProperty("服务项排序字段")
     private Integer serveItemSortNum;
+
 }

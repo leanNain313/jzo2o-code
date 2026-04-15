@@ -7,32 +7,35 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="jzo2o-rabbitmq" />
         <module name="jzo2o-shardingsphere-jdbc" />
+        <module name="jzo2o-xxl-job" />
+        <module name="jzo2o-foundations" />
+        <module name="jzo2o-statemachine" />
+        <module name="jzo2o-mvc" />
+        <module name="jzo2o-api" />
+        <module name="jzo2o-thirdparty" />
+        <module name="jzo2o-customer" />
+        <module name="jzo2o-publics" />
+        <module name="jzo2o-orders-seize" />
+        <module name="jzo2o-mysql" />
+        <module name="jzo2o-orders-history" />
+        <module name="jzo2o-rabbitmq" />
         <module name="jzo2o-market" />
         <module name="jzo2o-redis" />
         <module name="jzo2o-common" />
         <module name="jzo2o-sentinel" />
         <module name="jzo2o-es" />
-        <module name="jzo2o-xxl-job" />
-        <module name="jzo2o-foundations" />
         <module name="jzo2o-seata" />
         <module name="jzo2o-orders-manager" />
-        <module name="jzo2o-statemachine" />
-        <module name="jzo2o-mvc" />
-        <module name="jzo2o-api" />
         <module name="jzo2o-gateway" />
         <module name="jzo2o-knife4j-web" />
-        <module name="jzo2o-thirdparty" />
-        <module name="jzo2o-customer" />
         <module name="jzo2o-orders-base" />
-        <module name="jzo2o-publics" />
         <module name="jzo2o-trade" />
-        <module name="jzo2o-mysql" />
         <module name="jzo2o-canal-sync" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="jzo2o-orders-dispatch" target="11" />
       <module name="xxl-job" target="1.8" />
       <module name="xxl-job-admin" target="1.8" />
       <module name="xxl-job-core" target="1.8" />
@@ -55,7 +58,10 @@
       <module name="jzo2o-mvc" options="-parameters" />
       <module name="jzo2o-mysql" options="-parameters" />
       <module name="jzo2o-orders-base" options="-parameters" />
+      <module name="jzo2o-orders-dispatch" options="-parameters" />
+      <module name="jzo2o-orders-history" options="-parameters" />
       <module name="jzo2o-orders-manager" options="-parameters" />
+      <module name="jzo2o-orders-seize" options="-parameters" />
       <module name="jzo2o-publics" options="-parameters" />
       <module name="jzo2o-rabbitmq" options="-parameters" />
       <module name="jzo2o-redis" options="-parameters" />
