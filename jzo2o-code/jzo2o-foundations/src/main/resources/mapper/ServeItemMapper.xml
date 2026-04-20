@@ -67,7 +67,9 @@
             type.id AS serve_type_id,
             type.`name` AS serve_type_name,
             item.id AS serve_item_id,
-            item.`name` AS serve_item_name
+            item.`name` AS serve_item_name,
+            item.img AS img,
+            item.description AS description
         FROM
             serve_item AS item
                 LEFT JOIN serve_type AS type ON item.serve_type_id = type.id
@@ -91,6 +93,8 @@
         <collection property="serveItemList" ofType="com.jzo2o.api.foundations.dto.ServeItemSimpleDTO">
             <id column="serve_item_id" property="serveItemId"></id>
             <result column="serve_item_name" property="serveItemName"></result>
+            <result column="img" property="img"></result>
+            <result column="description" property="description"></result>
         </collection>
     </resultMap>
 </mapper>

@@ -3,6 +3,7 @@ package com.jzo2o.customer.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jzo2o.common.expcetions.BadRequestException;
 import com.jzo2o.common.expcetions.ForbiddenOperationException;
@@ -12,6 +13,8 @@ import com.jzo2o.customer.model.domain.ChatMessage;
 import com.jzo2o.customer.model.domain.ChatSession;
 import com.jzo2o.customer.model.dto.request.ChatMessageRecallReqDTO;
 import com.jzo2o.customer.model.dto.request.ChatMessageSendReqDTO;
+import com.jzo2o.customer.model.dto.request.ChatMessageScrollQueryReqDTO;
+import com.jzo2o.customer.model.dto.response.ChatMessageListResDTO;
 import com.jzo2o.customer.model.dto.response.ChatMessageSendResDTO;
 import com.jzo2o.customer.service.IChatMessageService;
 import com.jzo2o.mvc.utils.UserContext;
@@ -20,12 +23,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 消息服务实现类
  */
 @Service
 public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatMessage> implements IChatMessageService {
+
+    /**
+     * 滚动查询默认条数
+     */
+    private static final long SCROLL_SIZE = 20L;
 
     /**
      * 用户角色
@@ -143,6 +154,57 @@ public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatM
         removeById(reqDTO.getMessageId());
 
         refreshSessionLastMessage(chatMessage.getSessionId());
+    }
+
+    /**
+     * 根据消息时间滚动查询消息记录
+     */
+    @Override
+    public List<ChatMessageListResDTO> scrollList(ChatMessageScrollQueryReqDTO reqDTO) {
+        ChatSession chatSession = chatSessionMapper.selectById(reqDTO.getSessionId());
+        if (ObjectUtil.isNull(chatSession)) {
+            throw new BadRequestException("会话不存在");
+        }
+
+        Long currentUserId = UserContext.currentUserId();
+        if (ObjectUtil.notEqual(currentUserId, chatSession.getUserId())
+                && ObjectUtil.notEqual(currentUserId, chatSession.getStaffId())) {
+            throw new ForbiddenOperationException("无权查询该会话消息");
+        }
+
+        Page<ChatMessage> page = new Page<>(1, SCROLL_SIZE, false);
+        LambdaQueryWrapper<ChatMessage> queryWrapper = Wrappers.<ChatMessage>lambdaQuery()
+                .eq(ChatMessage::getSessionId, reqDTO.getSessionId())
+                .lt(ObjectUtil.isNotNull(reqDTO.getLastTime()), ChatMessage::getCreatedAt, reqDTO.getLastTime())
+                .orderByDesc(ChatMessage::getCreatedAt)
+                .orderByDesc(ChatMessage::getId);
+
+        Page<ChatMessage> messagePage = baseMapper.selectPage(page, queryWrapper);
+        if (ObjectUtil.isEmpty(messagePage) || ObjectUtil.isEmpty(messagePage.getRecords())) {
+            return Collections.emptyList();
+        }
+
+        LocalDateTime userReadLast = chatSession.getUserReadLastTime();
+        LocalDateTime staffReadLast = chatSession.getStaffReadLastTime();
+        boolean staffViewing = ObjectUtil.equal(currentUserId, chatSession.getStaffId());
+        boolean userViewing = ObjectUtil.equal(currentUserId, chatSession.getUserId());
+
+        return messagePage.getRecords().stream().map(message -> {
+            ChatMessageListResDTO resDTO = new ChatMessageListResDTO();
+            resDTO.setMessageId(message.getId());
+            resDTO.setSessionId(message.getSessionId());
+            resDTO.setContent(message.getContent());
+            resDTO.setCreatedAt(message.getCreatedAt());
+            resDTO.setMsgType(message.getMsgType());
+            resDTO.setRole(message.getRole());
+            resDTO.setCreatorId(message.getCreatorId());
+            if (staffViewing && ObjectUtil.equal(message.getRole(), ROLE_STAFF)) {
+                resDTO.setPeerRead(userReadLast != null && !message.getCreatedAt().isAfter(userReadLast));
+            } else if (userViewing && ObjectUtil.equal(message.getRole(), ROLE_USER)) {
+                resDTO.setPeerRead(staffReadLast != null && !message.getCreatedAt().isAfter(staffReadLast));
+            }
+            return resDTO;
+        }).collect(Collectors.toList());
     }
 
     /**

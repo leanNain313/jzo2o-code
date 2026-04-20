@@ -21,6 +21,7 @@ import com.jzo2o.common.utils.CollUtils;
 import com.jzo2o.common.utils.IdUtils;
 import com.jzo2o.common.utils.ObjectUtils;
 import com.jzo2o.common.utils.*;
+import com.jzo2o.customer.mapper.CommonUserMapper;
 import com.jzo2o.customer.mapper.ServeProviderMapper;
 import com.jzo2o.customer.model.domain.*;
 import com.jzo2o.customer.model.dto.ServeSkillSimpleDTO;
@@ -74,6 +75,9 @@ public class ServeProviderServiceImpl extends ServiceImpl<ServeProviderMapper, S
     private IServeProviderService owner;
     @Resource
     private SmsCodeApi smsCodeApi;
+
+    @Resource
+    private CommonUserMapper commonUserMapper;
 
     @Override
     public PageResult<ServeProviderListResDTO> pageQueryWorker(ServeProviderPageQueryReqDTO serveProviderPageQueryReqDTO) {

@@ -101,6 +101,13 @@ logging:
 jzo2o:
   access-path-white-list:
     - /foundations/open/login
+    - /publics/map/regeo
+    - /foundations/customer/serve/firstPageServeList
+    - /foundations/consumer/region/activeRegionList
+    - /foundations/customer/serve/hotServeList
+    - /foundations/customer/serve/page
+    - /foundations/customer/serve/serveTypeList
+    - /foundations/customer/serve/search
     - /customer/open/login/worker
     - /customer/open/login/user
     - /customer/open/login/common/user

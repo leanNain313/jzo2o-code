@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -50,4 +51,10 @@ public class ServeCategoryResDTO {
      */
     @ApiModelProperty("服务项图标列表")
     private List<ServeSimpleResDTO> serveResDTOList;
+
+    /**
+     * 服务费率
+     */
+    @ApiModelProperty("服务费率")
+    private BigDecimal serveRate;
 }

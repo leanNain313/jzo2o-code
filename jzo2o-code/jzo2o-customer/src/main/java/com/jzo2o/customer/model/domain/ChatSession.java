@@ -77,6 +77,18 @@ public class ChatSession implements Serializable {
     private LocalDateTime lastTime;
 
     /**
+     * 用户已读到最后一条消息的创建时间
+     */
+    @TableField("user_read_last_time")
+    private LocalDateTime userReadLastTime;
+
+    /**
+     * 服务人员已读到最后一条消息的创建时间
+     */
+    @TableField("staff_read_last_time")
+    private LocalDateTime staffReadLastTime;
+
+    /**
      * 创建时间
      */
     @TableField("created_at")

@@ -95,4 +95,9 @@ public class ServeAggregationResDTO {
      * 服务图标
      */
     private String serveItemIcon;
+
+    /**
+     * 服务费率
+     */
+    private BigDecimal serveRate;
 }

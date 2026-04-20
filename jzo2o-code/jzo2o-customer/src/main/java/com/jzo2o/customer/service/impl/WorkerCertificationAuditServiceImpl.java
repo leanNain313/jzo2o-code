@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,6 +14,7 @@ import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.enums.CertificationStatusEnum;
 import com.jzo2o.customer.mapper.WorkerCertificationAuditMapper;
 import com.jzo2o.customer.model.domain.AgencyCertificationAudit;
+import com.jzo2o.customer.model.domain.ServeProvider;
 import com.jzo2o.customer.model.domain.WorkerCertification;
 import com.jzo2o.customer.model.domain.WorkerCertificationAudit;
 import com.jzo2o.customer.model.dto.WorkerCertificationUpdateDTO;
@@ -71,7 +73,7 @@ public class WorkerCertificationAuditServiceImpl extends ServiceImpl<WorkerCerti
             workerCertification = new WorkerCertification();
             workerCertification.setId(serveProviderId);
             workerCertification.setCertificationStatus(CertificationStatusEnum.PROGRESSING.getStatus());//认证中
-            workerCertificationService.save(workerCertification);
+            workerCertificationService.saveOrUpdate(workerCertification);
         }
     }
 
@@ -113,6 +115,11 @@ public class WorkerCertificationAuditServiceImpl extends ServiceImpl<WorkerCerti
             workerCertificationUpdateDTO.setCertificationTime(workerCertificationAudit.getAuditTime());
         }
         workerCertificationService.updateById(workerCertificationUpdateDTO);
+        UpdateWrapper<ServeProvider> updateWrapper1 = new UpdateWrapper<>();
+        updateWrapper1.eq("id", workerCertificationAudit.getServeProviderId());
+        //头像也就是证明材料
+        updateWrapper1.set("avatar", workerCertificationAudit.getCertificationMaterial());
+        serveProviderService.update(updateWrapper1);
     }
 
     /**

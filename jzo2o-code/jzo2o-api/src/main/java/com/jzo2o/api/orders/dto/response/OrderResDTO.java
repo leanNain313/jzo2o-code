@@ -23,6 +23,12 @@ public class OrderResDTO {
     private Long id;
 
     /**
+     * 下单用户 id
+     */
+    @ApiModelProperty("下单用户 id")
+    private Long userId;
+
+    /**
      * 订单编码
      */
     @Deprecated
@@ -134,6 +140,24 @@ public class OrderResDTO {
      */
     @ApiModelProperty("服务人姓名")
     private String serverName;
+
+    /**
+     * 服务人员电话
+     */
+    @ApiModelProperty("服务人员电话")
+    private String phone;
+
+    /**
+     * 问题图片
+     */
+    @ApiModelProperty("问题图片")
+    private String questionImage;
+
+    /**
+     * 问题描述
+     */
+    @ApiModelProperty("问题描述")
+    private String questionDes;
 
     /**
      * 支付超时时间，该时间只对待支付有意义

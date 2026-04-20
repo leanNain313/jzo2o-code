@@ -39,4 +39,13 @@ public class ChatSessionListResDTO {
 
     @ApiModelProperty("最后消息时间")
     private LocalDateTime lastTime;
+
+    @ApiModelProperty("未读消息条数（客服端：用户发来的未读；用户端：客服发来的未读）")
+    private Long unreadCount;
+
+    @ApiModelProperty("用户已读游标（最后一条已读消息的创建时间）")
+    private LocalDateTime userReadLastTime;
+
+    @ApiModelProperty("服务人员已读游标（最后一条已读消息的创建时间）")
+    private LocalDateTime staffReadLastTime;
 }

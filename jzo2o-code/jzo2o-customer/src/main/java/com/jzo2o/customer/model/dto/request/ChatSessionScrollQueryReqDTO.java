@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +18,9 @@ public class ChatSessionScrollQueryReqDTO {
     @ApiModelProperty(value = "最后一条消息时间，不传则查询最新")
     private LocalDateTime lastTime;
 
-    @NotNull(message = "用户id不能为空")
-    @ApiModelProperty(value = "用户id", required = true)
+    @ApiModelProperty(value = "用户id（C 端传；与 staffId 二选一，需与当前登录人一致）")
     private Long userId;
+
+    @ApiModelProperty(value = "服务人员id（服务人员端传；与 userId 二选一，需与当前登录人一致）")
+    private Long staffId;
 }

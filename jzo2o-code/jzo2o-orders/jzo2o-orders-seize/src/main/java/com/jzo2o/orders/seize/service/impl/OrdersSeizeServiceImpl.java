@@ -230,7 +230,7 @@ public class OrdersSeizeServiceImpl extends ServiceImpl<OrdersSeizeMapper, Order
 
         // 3.查询符合条件的抢单列表id
         List<OrdersSeizeListResDTO.OrdersSeize> ordersSeizes = getOrdersSeizeId(
-                serveItemIds, detail.getLon(), detail.getLat(), serveDistance, detail.getCityCode(), ordersSerizeListReqDTO);
+                serveItemIds, ordersSerizeListReqDTO.getLon(), ordersSerizeListReqDTO.getLat(), serveDistance, detail.getCityCode(), ordersSerizeListReqDTO);
 
         return new OrdersSeizeListResDTO(CollUtils.defaultIfEmpty(ordersSeizes, new ArrayList<>()));
     }
@@ -404,6 +404,8 @@ public class OrdersSeizeServiceImpl extends ServiceImpl<OrdersSeizeMapper, Order
         }
         // 2.生成服务单,
         OrdersServe ordersServe = BeanUtils.toBean(ordersSeize, OrdersServe.class);
+        // OrdersServe 需要单独维护 orders_id，BeanUtils 不会从 OrdersSeize.id 自动映射过来
+        ordersServe.setOrdersId(ordersSeize.getId());
         ordersServe.setCreateTime(null);
         ordersServe.setUpdateTime(null);
         // 服务单状态 机构抢单状态：待分配；服务人员抢单状态：待服务

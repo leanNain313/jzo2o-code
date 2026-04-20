@@ -13,6 +13,7 @@ import com.jzo2o.orders.manager.model.dto.OrderCancelDTO;
 import com.jzo2o.orders.manager.model.dto.request.OrderPageQueryReqDTO;
 import com.jzo2o.orders.manager.model.dto.request.OrdersPayReqDTO;
 import com.jzo2o.orders.manager.model.dto.request.PlaceOrderReqDTO;
+import com.jzo2o.orders.manager.model.dto.response.CommentPageDTO;
 import com.jzo2o.orders.manager.model.dto.response.OperationOrdersDetailResDTO;
 import com.jzo2o.orders.manager.model.dto.response.OrdersPayResDTO;
 import com.jzo2o.orders.manager.model.dto.response.PlaceOrderResDTO;
@@ -87,7 +88,7 @@ public interface IOrdersManagerService extends IService<Orders> {
      * @param sortBy        排序字段
      * @return 订单列表
      */
-    List<OrderSimpleResDTO> consumerQueryList(Long currentUserId, Integer ordersStatus, Long sortBy);
+    CommentPageDTO consumerQueryList(Long currentUserId, Integer ordersStatus, Long sortBy);
 
 
     /**

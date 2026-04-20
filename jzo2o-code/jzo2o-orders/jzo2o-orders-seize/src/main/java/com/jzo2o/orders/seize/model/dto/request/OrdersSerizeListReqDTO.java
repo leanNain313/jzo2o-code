@@ -47,4 +47,9 @@ public class OrdersSerizeListReqDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime maxServeStartTime;
 
+    @ApiModelProperty("经度")
+    private Double lon;
+
+    @ApiModelProperty("纬度")
+    private Double lat;
 }

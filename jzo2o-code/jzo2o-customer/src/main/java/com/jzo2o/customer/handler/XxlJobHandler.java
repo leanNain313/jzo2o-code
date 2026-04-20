@@ -1,5 +1,6 @@
 package com.jzo2o.customer.handler;
 
+import com.jzo2o.customer.service.IOrderCommentService;
 import com.jzo2o.rabbitmq.plugins.ErrorMessageRecoverer;
 import com.jzo2o.rabbitmq.plugins.RabbitMqResender;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -18,6 +19,9 @@ public class XxlJobHandler {
     @Resource
     private RabbitMqResender rabbitMqResender;
 
+    @Resource
+    private IOrderCommentService commentService;
+
     /**
      * rabbitmq异常消息拉取并重新发回队列
      */
@@ -34,6 +38,12 @@ public class XxlJobHandler {
                 log.error("rabbitmq异常消息拉取失败,e:",e);
             }
         }
+    }
+
+    @XxlJob("serveProviderScore")
+    public void serveProviderScore() {
+        log.info("更新用户人员综合的分");
+        commentService.statisticsScore();
     }
 
 }

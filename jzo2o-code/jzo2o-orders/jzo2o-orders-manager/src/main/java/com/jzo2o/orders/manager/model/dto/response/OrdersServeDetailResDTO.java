@@ -89,6 +89,10 @@ public class OrdersServeDetailResDTO {
         private LocalDateTime realServeEndTime;
         @ApiModelProperty("服务图片地址")
         private String serveItemImg;
+        @ApiModelProperty("问题图片")
+        private String questionImage;
+        @ApiModelProperty("问题描述")
+        private String questionDes;
     }
 
 
@@ -98,6 +102,8 @@ public class OrdersServeDetailResDTO {
     @AllArgsConstructor
     @Builder
     public static class CustomerInfo {
+        @ApiModelProperty("下单用户 id（用于会话等）")
+        private Long userId;
         @ApiModelProperty(value = "联系人", required = true)
         private String contactsName;
         @ApiModelProperty(value = "联系人手机号", required = true)

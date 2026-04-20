@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jzo2o.api.customer.EvaluationApi;
 import com.jzo2o.api.customer.InstitutionStaffApi;
+import com.jzo2o.api.customer.WalletApi;
+import com.jzo2o.api.customer.dto.request.WalletIncomeReqDTO;
 import com.jzo2o.api.customer.dto.response.EvaluationScoreResDTO;
 import com.jzo2o.api.customer.dto.response.InstitutionStaffResDTO;
 import com.jzo2o.api.foundations.RegionApi;
@@ -19,8 +21,10 @@ import com.jzo2o.api.foundations.dto.response.ServeItemSimpleResDTO;
 import com.jzo2o.api.orders.dto.response.InstitutionStaffServeCountResDTO;
 import com.jzo2o.common.constants.UserType;
 import com.jzo2o.common.expcetions.CommonException;
+import com.jzo2o.common.model.CurrentUserInfo;
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.common.utils.*;
+import com.jzo2o.mvc.utils.UserContext;
 import com.jzo2o.mysql.utils.PageUtils;
 import com.jzo2o.orders.base.config.OrderStateMachine;
 import com.jzo2o.orders.base.enums.BreachHaviorTypeEnum;
@@ -112,6 +116,9 @@ public class OrdersServeManagerServiceImpl extends ServiceImpl<OrdersServeMapper
     private IBreachRecordService breachRecordService;
     @Resource
     private EvaluationApi evaluationApi;
+
+    @Resource
+    private WalletApi walletApi;
 
     @Override
     public PageResult<OrdersServeResDTO> queryForPage(Long currentUserId, Integer serveProviderType, OrdersServePageQueryReqDTO ordersServePageQueryReqDTO) {
@@ -263,7 +270,7 @@ public class OrdersServeManagerServiceImpl extends ServiceImpl<OrdersServeMapper
 
     @Override
     @HashCacheClear(key = SERVE_ORDERS_KEY, fieldId = "#{serveFinishedReqDTO.id}")
-    @Transactional(rollbackFor = Exception.class)
+    @GlobalTransactional
     public void serveFinished(ServeFinishedReqDTO serveFinishedReqDTO, Long serveProviderId, Integer serveProviderType) {
         // 1.校验服务单是否可以开始
         // 1.1.校验服务单是否所欲当前机构,或服务人员
@@ -290,6 +297,15 @@ public class OrdersServeManagerServiceImpl extends ServiceImpl<OrdersServeMapper
         Orders orders = ordersManagerService.queryById(ordersServe.getId());
         orderStateMachine.changeStatus(orders.getUserId(), ordersServe.getId().toString(), OrderStatusChangeEventEnum.COMPLETE_SERVE,orderSnapshotDTO);
 
+        // 钱包入账
+        CurrentUserInfo currentUserInfo = UserContext.currentUser();
+        WalletIncomeReqDTO reqDTO = new WalletIncomeReqDTO();
+        reqDTO.setServiceOrderId(orders.getId());
+        reqDTO.setAmount(ordersServe.getOrdersAmount());
+        reqDTO.setUserId(currentUserInfo.getId());
+        reqDTO.setUserName(currentUserInfo.getName());
+        reqDTO.setDescription(orders.getServeItemName());
+        walletApi.income(reqDTO);
 
     }
 
@@ -318,7 +334,10 @@ public class OrdersServeManagerServiceImpl extends ServiceImpl<OrdersServeMapper
         serveInfo.setUnit(ObjectUtils.get(serveItemResDTO, ServeItemResDTO::getUnit));
         // 服务数量
         serveInfo.setServeNum(ObjectUtils.get(ordersServe, OrdersServe::getPurNum));
-
+        // 用户问题图片
+        serveInfo.setQuestionImage(orders.getQuestionImage());
+        //用户问题描述
+        serveInfo.setQuestionDes(orders.getQuestionDes());
         // 订单信息
         ordersServeDetailResDTO.setOrdersInfo(new OrdersServeDetailResDTO.OrdersInfo(ordersServe.getId(), ordersServe.getServeStartTime(), ordersServe.getOrdersAmount()));
 

@@ -43,4 +43,6 @@ public interface ICommonUserService extends IService<CommonUser> {
     void updateStatus(CommonUserUpdateReqDTO commonUserUpdateReqDTO);
 
     void updateUserMessage(UpdateUserRequest request);
+
+
 }

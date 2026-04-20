@@ -68,5 +68,11 @@ public class ServeAggregationSimpleResDTO {
     @ApiModelProperty("城市编码")
     private String cityCode;
 
+    /**
+     * 服务描述
+     */
+    @ApiModelProperty("服务描述")
+    private String description;
+
 
 }

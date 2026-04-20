@@ -10,6 +10,7 @@ import com.jzo2o.mvc.utils.UserContext;
 import com.jzo2o.orders.manager.model.dto.OrderCancelDTO;
 import com.jzo2o.orders.manager.model.dto.request.OrdersPayReqDTO;
 import com.jzo2o.orders.manager.model.dto.request.PlaceOrderReqDTO;
+import com.jzo2o.orders.manager.model.dto.response.CommentPageDTO;
 import com.jzo2o.orders.manager.model.dto.response.OrdersPayResDTO;
 import com.jzo2o.orders.manager.model.dto.response.PlaceOrderResDTO;
 import com.jzo2o.orders.manager.service.IOrdersCreateService;
@@ -58,8 +59,8 @@ public class ConsumerOrdersController {
             @ApiImplicitParam(name = "ordersStatus", value = "订单状态，0：待支付，100：派单中，200：待服务，300：服务中，500：订单完成，600：订单取消，700：已关闭", required = false, dataTypeClass = Integer.class),
             @ApiImplicitParam(name = "sortBy", value = "排序字段", required = false, dataTypeClass = Long.class)
     })
-    public List<OrderSimpleResDTO> consumerQueryList(@RequestParam(value = "ordersStatus", required = false) Integer ordersStatus,
-                                                     @RequestParam(value = "sortBy", required = false) Long sortBy) {
+    public CommentPageDTO consumerQueryList(@RequestParam(value = "ordersStatus", required = false) Integer ordersStatus,
+                                            @RequestParam(value = "sortBy", required = false) Long sortBy) {
         return ordersManagerService.consumerQueryList(UserContext.currentUserId(), ordersStatus, sortBy);
     }
 

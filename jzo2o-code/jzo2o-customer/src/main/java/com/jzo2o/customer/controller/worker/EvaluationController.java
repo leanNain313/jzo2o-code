@@ -17,14 +17,15 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 评价相关接口
+ * 评价相关接口（已废弃：依赖外部评价系统，请改用 {@link OrderCommentController} 订单评论接口）
  *
  * @author itcast
  * @create 2023/9/11 16:14
  **/
+@Deprecated
 @RestController("workerEvaluationController")
 @RequestMapping("/worker/evaluation")
-@Api(tags = "服务端 - 评价相关接口")
+@Api(tags = "服务端 - 评价相关接口（已废弃）")
 public class EvaluationController {
     @Resource
     private EvaluationService evaluationService;

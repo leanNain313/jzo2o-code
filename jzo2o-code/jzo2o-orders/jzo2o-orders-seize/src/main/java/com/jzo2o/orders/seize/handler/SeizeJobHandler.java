@@ -78,7 +78,6 @@ public class SeizeJobHandler {
             try {
                 //传入配置的下单时间距离服务预约时间间隔
                 owner.seizeTimeoutIntoDispatchPool(configRegionInnerResDTO.getCityCode(), configRegionInnerResDTO.getDiversionInterval());
-
             } catch (Exception e) {
                 log.error("抢单订单超时处理异常，e:", e);
             }

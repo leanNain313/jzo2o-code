@@ -38,8 +38,8 @@ public class ServeController {
 
     @PutMapping("/{id}")
     @ApiOperation("修改服务")
-    public Result<Void> updateServeById(@PathVariable Long id, BigDecimal price) {
-        iServeService.updateServeById(id, price);
+    public Result<Void> updateServeById(@PathVariable Long id, BigDecimal price, BigDecimal serveRate) {
+        iServeService.updateServeById(id, price, serveRate);
         return Result.ok();
     }
 

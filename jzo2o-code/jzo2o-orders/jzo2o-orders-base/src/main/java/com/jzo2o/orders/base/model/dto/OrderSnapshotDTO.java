@@ -225,6 +225,16 @@ public class OrderSnapshotDTO extends StateMachineSnapshot {
      */
     private Integer evaluationStatus;
 
+    /**
+     * 问题图片
+     */
+    private String questionImage;
+
+    /**
+     * 问题描述
+     */
+    private String questionDes;
+
 
     @Override
     public String getSnapshotId() {

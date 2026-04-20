@@ -83,4 +83,9 @@ public class Serve implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateBy;
+
+    /**
+     * 服务费率
+     */
+    private BigDecimal serveRate;
 }

@@ -37,4 +37,8 @@ public class OrderCommentCreateReqDTO {
     @NotNull(message = "服务项id不能为空")
     @ApiModelProperty(value = "服务项id", required = true)
     private Long serveItemId;
+
+    @NotNull(message = "服务id不能为空")
+    @ApiModelProperty(value = "服务id",required = true)
+    private Long serveId;
 }
