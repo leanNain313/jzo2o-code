@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.Duration;
 
 @Service
@@ -72,16 +75,23 @@ public class OrdersDiversionCommonServiceImpl implements IOrdersDiversionCommonS
         String serveItemImg = ObjectUtils.get(serveAggregationResDTO, ServeAggregationResDTO::getServeItemImg);
         //用于排序,服务预约时间戳加订单号后5位
         long sortBy = DateUtils.toEpochMilli(orders.getServeStartTime()) + orders.getId() % 100000;
+        ServeAggregationResDTO serveByCityCodeAndItemId = serveApi.getServeByCityCodeAndItemId(orders.getServeItemId(), orders.getCityCode());
+//        BigDecimal rate = new BigDecimal("1.0");
+//        BigDecimal couponRate = rate.subtract(serveByCityCodeAndItemId.getServeRate());
+        // 服务人员需要承担的优惠券金额
+        BigDecimal couponCount = orders.getTotalAmount().multiply(serveByCityCodeAndItemId.getServeRate()).setScale(2, RoundingMode.HALF_UP);
+        // 平台服务费
+        BigDecimal systemCount = orders.getTotalAmount().multiply(serveByCityCodeAndItemId.getServeRate()).setScale(2, RoundingMode.HALF_UP);
         OrdersSeize ordersSeize = OrdersSeize.builder()
                 .id(orders.getId())
-                .ordersAmount(orders.getRealPayAmount())
+//                .ordersAmount(orders.getRealPayAmount())
                 .cityCode(orders.getCityCode())
                 .serveTypeId(serveTypeId)
                 .serveTypeName(serveTypeName)
                 .serveItemId(orders.getServeItemId())
                 .serveItemName(serveItemName)
                 .serveItemImg(serveItemImg)
-                .ordersAmount(orders.getRealPayAmount())
+                .ordersAmount(orders.getRealPayAmount().subtract(couponCount).subtract(systemCount).setScale(2, RoundingMode.HALF_UP))
                 .serveStartTime(orders.getServeStartTime())
                 .serveAddress(orders.getServeAddress())
                 .lon(orders.getLon())
@@ -96,14 +106,13 @@ public class OrdersDiversionCommonServiceImpl implements IOrdersDiversionCommonS
         if (between.toMinutes() < diversionInterval) {
             OrdersDispatch ordersDispatch = OrdersDispatch.builder()
                     .id(orders.getId())
-                    .ordersAmount(orders.getRealPayAmount())
+                    .ordersAmount(orders.getRealPayAmount().subtract(couponCount).subtract(systemCount).setScale(2, RoundingMode.HALF_UP))
                     .cityCode(orders.getCityCode())
                     .serveTypeId(serveTypeId)
                     .serveTypeName(serveTypeName)
                     .serveItemId(orders.getServeItemId())
                     .serveItemName(serveItemName)
                     .serveItemImg(serveItemImg)
-                    .ordersAmount(orders.getRealPayAmount())
                     .serveStartTime(orders.getServeStartTime())
                     .serveAddress(orders.getServeAddress())
                     .lon(orders.getLon())

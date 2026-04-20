@@ -17,6 +17,12 @@ public interface ServeApi {
     Boolean judgeServe(@RequestBody JudgeRequest request);
 
     @PostMapping("/place/{id}")
-    public void placeOrder(@PathVariable Long id);
+    void placeOrder(@PathVariable Long id);
+
+    @GetMapping("/serve")
+    ServeAggregationResDTO getServeByCityCodeAndItemId(
+            @RequestParam Long serveItemId,
+            @RequestParam String cityCode
+    );
 
 }

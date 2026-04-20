@@ -62,7 +62,7 @@ public class OrdersSeizeSyncHandler extends AbstractCanalRabbitMqMsgListener<Ord
             ordersSeizeInfo.setKeyWords(ordersSeize.getServeTypeName() + ordersSeize.getServeItemName() + ordersSeize.getServeAddress());
             return ordersSeizeInfo;
         }).collect(Collectors.toList());
-
+        log.info("es地址" + elasticSearchTemplate);
         Boolean result = elasticSearchTemplate.opsForDoc().batchInsert(ORDERS_SEIZE, ordersSeizeInfos);
         if (!result){
             throw new RuntimeException("同步抢单池加入es失败");
@@ -71,7 +71,10 @@ public class OrdersSeizeSyncHandler extends AbstractCanalRabbitMqMsgListener<Ord
         ordersSeizeInfos.stream().forEach(ordersSeizeInfo -> {
             String redisKey = String.format(RedisConstants.RedisKey.ORDERS_RESOURCE_STOCK, RedisUtils.getCityIndex(ordersSeizeInfo.getCityCode()));
             // 库存默认1
-            redisTemplate.opsForHash().putIfAbsent(redisKey, ordersSeizeInfo.getId(), 1);
+            Boolean b = redisTemplate.opsForHash().putIfAbsent(redisKey, ordersSeizeInfo.getId(), 1);
+            if (!b) {
+                log.error("redis同步失败");
+            }
         });
     }
 

@@ -87,4 +87,9 @@ public class ServeResDTO {
      */
     @ApiModelProperty("更新时间")
     private LocalDateTime updateTime;
+
+    /**
+     *
+     */
+    private BigDecimal serveRate;
 }

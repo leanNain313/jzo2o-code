@@ -2,11 +2,15 @@ package com.jzo2o.customer.model.dto.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
 @ApiModel("审核请求封装类")
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuditRequest {
 
     /**

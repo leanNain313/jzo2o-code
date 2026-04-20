@@ -15,6 +15,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jzo2o.api.customer.AddressBookApi;
 import com.jzo2o.api.customer.InstitutionStaffApi;
 import com.jzo2o.api.customer.ServeProviderApi;
+import com.jzo2o.api.customer.WalletApi;
+import com.jzo2o.api.customer.dto.request.WalletIncomeReqDTO;
 import com.jzo2o.api.customer.dto.response.AddressBookResDTO;
 import com.jzo2o.api.customer.dto.response.InstitutionStaffResDTO;
 import com.jzo2o.api.customer.dto.response.ServeProviderResDTO;
@@ -143,6 +145,8 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
 
     @Resource
     private CouponApi couponApi;
+    @Resource
+    private WalletApi walletApi;
 
     /**
      * 生成订单id 格式：{yyMMdd}{13位id}
@@ -367,6 +371,20 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
         orderStateMachine.changeStatus(orders.getUserId(), String.valueOf(orders.getId()), OrderStatusChangeEventEnum.PAYED, orderSnapshotDTO);
         // 订单分流
         ordersDiversionService.diversion(orders);
+//        // 钱包入账：将实付金额记入接单服务人员钱包；customer 侧按订单号对「收入」账单幂等，避免重复回调双加
+//        OrdersServe ordersServe = ordersServeManagerService.queryById(orders.getId());
+//        if (ObjectUtil.isNotEmpty(ordersServe)) {
+//            ServeProviderResDTO serveProviderResDTO = serveProviderApi.getDetail(ordersServe.getServeProviderId());
+//            if (ObjectUtil.isNotEmpty(serveProviderResDTO)) {
+//                WalletIncomeReqDTO walletIncomeReqDTO = new WalletIncomeReqDTO();
+//                walletIncomeReqDTO.setUserId(serveProviderResDTO.getId());
+//                walletIncomeReqDTO.setUserName(serveProviderResDTO.getName());
+//                walletIncomeReqDTO.setServiceOrderId(orders.getId());
+//                walletIncomeReqDTO.setAmount(orders.getRealPayAmount());
+//                walletIncomeReqDTO.setDescription("订单支付收入");
+//                walletApi.income(walletIncomeReqDTO);
+//            }
+//        }
     }
 
 
@@ -438,7 +456,7 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
             return ordersPayResDTO;
         } else {
             //生成二维码
-            NativePayResDTO nativePayResDTO = generatQrCode(orders, ordersPayReqDTO.getTradingChannel());
+            NativePayResDTO nativePayResDTO = generatQrCode(orders, ordersPayReqDTO.getTradingChannel(), ordersPayReqDTO);
             OrdersPayResDTO ordersPayResDTO = BeanUtil.toBean(nativePayResDTO, OrdersPayResDTO.class);
             return ordersPayResDTO;
         }
@@ -447,7 +465,7 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
 
 
     //生成二维码
-    private NativePayResDTO generatQrCode(Orders orders, PayChannelEnum tradingChannel) {
+    private NativePayResDTO generatQrCode(Orders orders, PayChannelEnum tradingChannel, OrdersPayReqDTO ordersPayReqDTO) {
 
         //判断支付渠道
         Long enterpriseId = ObjectUtil.equal(PayChannelEnum.ALI_PAY, tradingChannel) ?
@@ -460,10 +478,19 @@ public class OrdersCreateServiceImpl extends ServiceImpl<OrdersMapper, Orders> i
         nativePayReqDTO.setTradingAmount(orders.getRealPayAmount());
         nativePayReqDTO.setEnterpriseId(enterpriseId);
         nativePayReqDTO.setProductAppId(PRODUCT_APP_ID);//指定支付来源是家政订单
+        nativePayReqDTO.setMemo(orders.getServeItemName());
         //判断是否切换支付渠道
         if (ObjectUtil.isNotEmpty(orders.getTradingChannel())
                 && ObjectUtil.notEqual(orders.getTradingChannel(), tradingChannel.toString())) {
             nativePayReqDTO.setChangeChannel(true);
+        }
+
+        //根据交易渠道设置商户号
+        if (ObjectUtil.equal(ordersPayReqDTO.getTradingChannel(), PayChannelEnum.WECHAT_PAY)) {
+            nativePayReqDTO.setEnterpriseId(tradeProperties.getWechatEnterpriseId());//微信商户号
+        }
+        if (ObjectUtil.equal(ordersPayReqDTO.getTradingChannel(), PayChannelEnum.ALI_PAY)) {
+            nativePayReqDTO.setEnterpriseId(tradeProperties.getAliEnterpriseId());//阿里商户号
         }
         //生成支付二维码
         NativePayResDTO downLineTrading = nativePayApi.createDownLineTrading(nativePayReqDTO);

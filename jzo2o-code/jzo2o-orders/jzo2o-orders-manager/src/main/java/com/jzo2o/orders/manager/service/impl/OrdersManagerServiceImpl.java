@@ -45,19 +45,21 @@ import com.jzo2o.common.utils.*;
 import com.jzo2o.mvc.utils.UserContext;
 import com.jzo2o.mysql.utils.PageUtils;
 import com.jzo2o.orders.base.config.OrderStateMachine;
-import com.jzo2o.orders.base.enums.EvaluationStatusEnum;
-import com.jzo2o.orders.base.enums.OrderPayStatusEnum;
-import com.jzo2o.orders.base.enums.OrderStatusChangeEventEnum;
-import com.jzo2o.orders.base.enums.OrderStatusEnum;
+import com.jzo2o.orders.base.enums.*;
+import com.jzo2o.orders.base.mapper.OrdersCanceledMapper;
 import com.jzo2o.orders.base.mapper.OrdersMapper;
 import com.jzo2o.orders.base.model.domain.Orders;
+import com.jzo2o.orders.base.model.domain.OrdersCanceled;
 import com.jzo2o.orders.base.model.domain.OrdersServe;
 import com.jzo2o.orders.base.model.dto.OrderSnapshotDTO;
+import com.jzo2o.orders.base.model.dto.OrderUpdateStatusDTO;
+import com.jzo2o.orders.base.service.IOrdersCommonService;
 import com.jzo2o.orders.base.service.IOrdersDiversionCommonService;
 import com.jzo2o.orders.manager.model.dto.OrderCancelDTO;
 import com.jzo2o.orders.manager.model.dto.request.OrderPageQueryReqDTO;
 import com.jzo2o.orders.manager.model.dto.request.OrdersPayReqDTO;
 import com.jzo2o.orders.manager.model.dto.request.PlaceOrderReqDTO;
+import com.jzo2o.orders.manager.model.dto.response.CommentPageDTO;
 import com.jzo2o.orders.manager.model.dto.response.OperationOrdersDetailResDTO;
 import com.jzo2o.orders.manager.model.dto.response.OrdersPayResDTO;
 import com.jzo2o.orders.manager.model.dto.response.PlaceOrderResDTO;
@@ -138,9 +140,15 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
     private CacheHelper cacheHelper;
     @Resource
     private OrdersManagerServiceImpl owner;
+
+    @Resource
+    private OrdersCanceledMapper ordersCanceledMapper;
+
     @Value("${jzo2o.openPay}")
     private Boolean openPay;
 
+    @Resource
+    private  IOrdersCommonService ordersCommonService;
     @Resource
     private CouponApi couponApi;
 
@@ -301,6 +309,7 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
             orderResDTO.setServeActualEndTime(ordersServe.getRealServeEndTime());
 
             ServeProviderResDTO serveProviderResDTO = serveProviderApi.getDetail(ordersServe.getServeProviderId());
+            orderResDTO.setPhone(serveProviderResDTO.getPhone());
             if (ObjectUtil.equal(UserType.WORKER, ordersServe.getServeProviderType())) {
                 orderResDTO.setServerId(ordersServe.getServeProviderId());
                 orderResDTO.setServerName(serveProviderResDTO.getName());
@@ -310,7 +319,6 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
                 orderResDTO.setServerName(institutionStaffResDTO.getName());
             }
         }
-
         return orderResDTO;
     }
 
@@ -368,6 +376,8 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
 
         //3.服务单信息
         OperationOrdersDetailResDTO.ServeInfo serveInfo = new OperationOrdersDetailResDTO.ServeInfo();
+        serveInfo.setQuestionImage(orderSnapshotDTO.getQuestionImage());
+        serveInfo.setQuestionDes(orderSnapshotDTO.getQuestionDes());
         OrdersServe ordersServe = ordersServeManagerService.queryById(id);
         if (ObjectUtil.isNotEmpty(ordersServe)) {
             //用户类型，2：服务人员，3：机构
@@ -501,8 +511,27 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
      */
     @Override
     public void cancel(OrderCancelDTO orderCancelDTO) {
+        // 1) 更新订单状态为已取消
+        // update orders set orders_status = 600 where id = 订单id and orders_status = 0
+        OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
+                .id(orderCancelDTO.getId())//订单id
+                .originStatus(OrderStatusEnum.NO_PAY.getStatus())//原始状态
+                .targetStatus(OrderStatusEnum.CANCELED.getStatus())//目标状态
+                .build();
+        Integer i = ordersCommonService.updateStatus(orderUpdateStatusDTO);
+        if (i <= 0) {
+            throw new ForbiddenOperationException("订单取消失败");
+        }
 
-
+        // 2) 保存取消订单记录
+        OrdersCanceled ordersCanceled = new OrdersCanceled();
+        ordersCanceled.setId(orderCancelDTO.getId());//订单id
+        ordersCanceled.setCancellerId(orderCancelDTO.getCurrentUserId());//取消人
+        ordersCanceled.setCancelerName(orderCancelDTO.getCurrentUserName());//取消人名称
+        ordersCanceled.setCancellerType(orderCancelDTO.getCurrentUserType());//取消人类型，1：普通用户，4：运营人员
+        ordersCanceled.setCancelReason(orderCancelDTO.getCancelReason());//取消原因
+        ordersCanceled.setCancelTime(LocalDateTime.now());//取消时间
+        ordersCanceledMapper.insert(ordersCanceled);
     }
 
 
@@ -573,14 +602,17 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
      * @return 订单列表
      */
     @Override
-    public List<OrderSimpleResDTO> consumerQueryList(Long currentUserId, Integer ordersStatus, Long sortBy) {
+    public CommentPageDTO consumerQueryList(Long currentUserId, Integer ordersStatus, Long sortBy) {
         //1.构件查询条件
         LambdaQueryWrapper<Orders> queryWrapper = Wrappers.<Orders>lambdaQuery()
-                .eq(ObjectUtils.isNotNull(ordersStatus), Orders::getOrdersStatus, ordersStatus)
+                .eq(ObjectUtils.isNotNull(ordersStatus) && ordersStatus != 400, Orders::getOrdersStatus, ordersStatus)
+                .eq(ObjectUtils.isNotNull(ordersStatus) && ordersStatus == 400, Orders::getOrdersStatus, 500)
+                .eq(ObjectUtils.isNotNull(ordersStatus) && ordersStatus == 400, Orders::getEvaluationStatus, 0)
                 .lt(ObjectUtils.isNotNull(sortBy), Orders::getSortBy, sortBy)
                 .eq(Orders::getUserId, currentUserId)
                 .eq(Orders::getDisplay, EnableStatusEnum.ENABLE.getStatus())
                 .select(Orders::getId);
+
         Page<Orders> queryPage = new Page<>();
         queryPage.addOrder(OrderItem.desc(SORT_BY));
         queryPage.setSearchCount(false);
@@ -588,21 +620,34 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
         //2.查询订单id列表
         Page<Orders> ordersPage = baseMapper.selectPage(queryPage, queryWrapper);
         if (ObjectUtil.isEmpty(ordersPage.getRecords())) {
-            return new ArrayList<>();
+            return new CommentPageDTO();
         }
 
         //3.提取订单id列表
         List<Long> ordersIds = CollUtils.getFieldValues(ordersPage.getRecords(), Orders::getId);
 
         //4.通过缓存您查询订单列表
-        return cacheHelper.batchGet(String.format(ORDERS, currentUserId), ordersIds, (objectIds, clazz) -> {
-            List<Orders> ordersList = batchQuery(objectIds);
-            if (CollUtils.isEmpty(ordersList)) {
-                return new HashMap<>();
-            }
+        Integer count = lambdaQuery()
+                .eq(Orders::getEvaluationStatus, EvaluationStatusEnum.WAIT_EVALUATE.getStatus())
+                .eq(Orders::getUserId, currentUserId)
+                .eq(Orders::getOrdersStatus, OrderStatusEnum.FINISHED.getStatus())
+                .count();
+        Integer count1 = lambdaQuery()
+                .eq(Orders::getEvaluationStatus, EvaluationStatusEnum.COMPLETE_EVALUATION.getStatus())
+                .eq(Orders::getUserId, currentUserId)
+                .count();
+        return CommentPageDTO.builder()
+                .noCommentCount(count)
+                .commentCount(count1)
+                .orderSimpleResDTOList(cacheHelper.batchGet(String.format(ORDERS, currentUserId), ordersIds, (objectIds, clazz) -> {
+                    List<Orders> ordersList = batchQuery(objectIds);
+                    if (CollUtils.isEmpty(ordersList)) {
+                        return new HashMap<>();
+                    }
 
-            return ordersList.stream().collect(Collectors.toMap(Orders::getId, o -> BeanUtil.toBean(o, OrderSimpleResDTO.class)));
-        }, OrderSimpleResDTO.class, ORDERS_PAGE_TTL);
+                    return ordersList.stream().collect(Collectors.toMap(Orders::getId, o -> BeanUtil.toBean(o, OrderSimpleResDTO.class)));
+                }, OrderSimpleResDTO.class, ORDERS_PAGE_TTL))
+                .build();
     }
 
 

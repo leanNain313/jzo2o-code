@@ -18,5 +18,6 @@ public class CacheUtils {
      */
     public void refreshRegionRelateCaches(Long id) {
         redisTemplate.delete(RedisConstants.CacheName.SERVE_ICON + "::" + id);
+        redisTemplate.delete(RedisConstants.CacheName.HOT_SERVE + "::" + id);
     }
 }

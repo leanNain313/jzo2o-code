@@ -4,36 +4,26 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/**
- * 服务技能项响应结果
- *
- * @author itcast
- * @create 2023/7/18 19:16
- **/
 @Data
-@ApiModel("服务技能项响应结果")
+@ApiModel("返回参数")
 public class ServeSkillItemResDTO {
-    /**
-     * 服务项id
-     */
+
     @ApiModelProperty("服务项id")
     private Long serveItemId;
 
-    /**
-     * 服务项名称
-     */
     @ApiModelProperty("服务项名称")
     private String serveItemName;
 
-    /**
-     * 是否被选中
-     */
-    @ApiModelProperty("是否被选中")
+    @ApiModelProperty("是否选中")
     private Boolean isSelected;
 
-    @ApiModelProperty("审核状态")
-    private String auditStatus;
+    @ApiModelProperty("审核状态：null-未申请， 0- 审核中， 1- 不通过， 2-通过")
+    private Integer auditStatus;
 
-    @ApiModelProperty("audit status code")
-    private Integer auditStatusCode;
+    @ApiModelProperty("服务图片")
+    private String img;
+
+    @ApiModelProperty("服务描述")
+    private String description;
+
 }

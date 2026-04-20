@@ -31,6 +31,8 @@ public class ServeProviderSettingsController {
         serveProviderSettingsService.setServeScope(serveScopeSetReqDTO);
     }
 
+
+
     @GetMapping
     @ApiOperation("获取设置")
     public ServeProviderSettingsGetResDTO getServeScope() {

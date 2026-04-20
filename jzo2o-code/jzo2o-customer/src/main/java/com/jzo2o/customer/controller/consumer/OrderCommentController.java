@@ -4,6 +4,8 @@ import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.model.dto.request.OrderCommentCreateReqDTO;
 import com.jzo2o.customer.model.dto.request.OrderCommentDeleteReqDTO;
 import com.jzo2o.customer.model.dto.request.OrderCommentPageReqDTO;
+import com.jzo2o.customer.model.dto.response.CommentCount;
+import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
 import com.jzo2o.customer.model.dto.response.OrderCommentPageResDTO;
 import com.jzo2o.customer.service.IOrderCommentService;
 import io.swagger.annotations.Api;
@@ -48,6 +50,16 @@ public class OrderCommentController {
     public PageResult<OrderCommentPageResDTO> pageByServeItemId(@Validated OrderCommentPageReqDTO reqDTO) {
         return orderCommentService.pageByServeItemId(reqDTO);
     }
+
+    @ApiOperation("分页获取「我的评论」（结构与服务员端订单评论分页一致，含订单关联信息）")
+    @GetMapping("/commentPageByUserId")
+    public PageResult<EvaluationAndOrdersResDTO> commentPageByUserId(Integer pageNo, Integer pageSize) {
+        return orderCommentService.commentPageByUserId(pageNo, pageSize);
+    }
+
+//    public CommentCount commentCount() {
+//        return orderCommentService.commentCount();
+//    }
 
     @DeleteMapping
     @ApiOperation("根据订单id删除评论")

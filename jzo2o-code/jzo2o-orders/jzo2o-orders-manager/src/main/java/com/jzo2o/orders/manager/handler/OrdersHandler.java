@@ -13,6 +13,7 @@ import com.jzo2o.api.trade.enums.RefundStatusEnum;
 import com.jzo2o.common.constants.UserType;
 import com.jzo2o.common.utils.NumberUtils;
 import com.jzo2o.orders.base.config.OrderStateMachine;
+import com.jzo2o.orders.base.enums.OrderPayStatusEnum;
 import com.jzo2o.orders.base.enums.OrderRefundStatusEnum;
 import com.jzo2o.orders.base.enums.OrderStatusChangeEventEnum;
 import com.jzo2o.orders.base.enums.OrderStatusEnum;
@@ -26,6 +27,7 @@ import com.jzo2o.orders.manager.service.IOrdersCreateService;
 import com.jzo2o.orders.manager.service.IOrdersManagerService;
 import com.jzo2o.orders.manager.service.IOrdersRefundService;
 import com.jzo2o.orders.manager.service.SimulateService;
+import com.jzo2o.orders.manager.strategy.OrderCancelStrategyManager;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -67,6 +70,9 @@ public class OrdersHandler {
 //    private SimulateService simulateService;
 
     @Resource
+    private OrderCancelStrategyManager orderCancelStrategyManager;
+
+    @Resource
     private IHistoryOrdersSyncCommonService historyOrdersSyncCommonService;
 
     /**
@@ -75,22 +81,30 @@ public class OrdersHandler {
      */
     @XxlJob(value = "cancelOverTimePayOrder")
     public void cancelOverTimePayOrder() {
-        //查询支付超时状态订单
-        Integer overTimePayOrderCount = ordersJobProperties.getOverTimePayOrderCount();
-        List<Orders> ordersList = ordersCreateService.queryOverTimePayOrdersListByCount(overTimePayOrderCount);
-        if (CollUtil.isEmpty(ordersList)) {
-            XxlJobHelper.log("查询到订单列表为空！");
+        //1. 查询超时未支付的订单
+        //select * from orders where orders_status = 0 and pay_status = 2 and create_time < 当前时间 - 15分钟
+        List<Orders> list = ordersManagerService.lambdaQuery()
+                .eq(Orders::getOrdersStatus, OrderStatusEnum.NO_PAY.getStatus())//orders_status = 0
+                .eq(Orders::getPayStatus, OrderPayStatusEnum.NO_PAY.getStatus())//pay_status = 2
+                .lt(Orders::getCreateTime, LocalDateTime.now().minusMinutes(15))//create_time < 当前时间 - 15分钟
+                .last("limit 100")//限制每次最多查100条
+                .list();
+        if (CollUtil.isEmpty(list)){
             return;
         }
 
-        for (Orders orders : ordersList) {
-
-            //取消订单
-            OrderCancelDTO orderCancelDTO = BeanUtil.toBean(orders, OrderCancelDTO.class);
-            orderCancelDTO.setCurrentUserType(UserType.SYSTEM);
-            orderCancelDTO.setCancelReason("订单超时支付，自动取消");
-            ordersManagerService.cancel(orderCancelDTO);
+        //2. 遍历集合, 获取到每一笔订单
+        for (Orders orders : list) {
+            //然后去取消
+            OrderCancelDTO orderCancelDTO = new OrderCancelDTO();
+            orderCancelDTO.setId(orders.getId());//订单id
+            orderCancelDTO.setCurrentUserId(0L);//当前用户id
+            orderCancelDTO.setCurrentUserName("系统定时任务");//当前用户名称
+            orderCancelDTO.setCurrentUserType(UserType.SYSTEM);//当前用户类型
+            orderCancelDTO.setCancelReason("超时未支付");//取消原因
+            orderCancelStrategyManager.cancel(orderCancelDTO);
         }
+
     }
 
 

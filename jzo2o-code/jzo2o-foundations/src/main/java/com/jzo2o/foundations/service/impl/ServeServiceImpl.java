@@ -101,6 +101,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
 
             // 属性拷贝
             Serve serve = BeanUtil.copyProperties(serveUpsertReqDTO, Serve.class);
+            serve.setServeRate(new BigDecimal("0.10")); // 默认10个点
             Region region = regionMapper.selectById(serve.getRegionId());
             if (ObjectUtil.isNotEmpty(region)) {
                 serve.setCityCode(region.getCityCode());
@@ -119,11 +120,16 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
      * @param price 服务价格
      */
     @Override
-    public void updateServeById(Long id, BigDecimal price) {
+    public void updateServeById(Long id, BigDecimal price, BigDecimal serveRate) {
         valid(id);
         UpdateWrapper<Serve> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id);
-        updateWrapper.set("price", price);
+        if (ObjectUtil.isNotEmpty(price)) {
+            updateWrapper.set("price", price);
+        }
+        if (ObjectUtil.isNotEmpty(serveRate)) {
+            updateWrapper.set("serve_rate", serveRate);
+        }
         update(updateWrapper);
     }
 
@@ -238,7 +244,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         }
 
         //3. 截取
-        serveCategoryResDTOS = CollUtil.sub(serveCategoryResDTOS, 0, Math.min(serveCategoryResDTOS.size(), 2));//服务类型截取
+        serveCategoryResDTOS = CollUtil.sub(serveCategoryResDTOS, 0, Math.min(serveCategoryResDTOS.size(), 4));//服务类型截取
         serveCategoryResDTOS.forEach(e ->
                 //服务项目截取
                 e.setServeResDTOList(CollUtil.sub(e.getServeResDTOList(), 0, Math.min(e.getServeResDTOList().size(), 4)))
@@ -285,6 +291,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         dto.setServeItemName(serveItem.getName());
         dto.setServeItemImg(serveItem.getImg());
         dto.setDetailImg(serveItem.getDetailImg());
+        dto.setDescription(serveItem.getDescription());
         dto.setUnit(serveItem.getUnit());
 
         return dto;

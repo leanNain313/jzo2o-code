@@ -25,4 +25,16 @@ public class ServeItemSimpleDTO {
      */
     @ApiModelProperty("服务名称")
     private String serveItemName;
+
+    /**
+     * 服务图片
+     */
+    @ApiModelProperty("服务图片")
+    private String img;
+
+    /**
+     * 描述
+     */
+    @ApiModelProperty("服务描述")
+    private String description;
 }

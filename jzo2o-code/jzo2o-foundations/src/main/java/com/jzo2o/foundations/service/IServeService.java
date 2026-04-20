@@ -28,7 +28,7 @@ public interface IServeService extends IService<Serve> {
 
     void addServeByBatch(List<ServeUpsertReqDTO> request);
 
-    void updateServeById(Long id, BigDecimal price);
+    void updateServeById(Long id, BigDecimal price, BigDecimal serveRate);
 
     void removeServeById(Long id);
 

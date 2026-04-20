@@ -140,6 +140,12 @@ public class OperationOrdersDetailResDTO {
 
         @ApiModelProperty("服务完成说明")
         private String serveAfterIllustrate;
+
+        @ApiModelProperty("下单问题图片（URL，多个可用逗号分隔）")
+        private String questionImage;
+
+        @ApiModelProperty("下单问题描述")
+        private String questionDes;
     }
 
     @Data

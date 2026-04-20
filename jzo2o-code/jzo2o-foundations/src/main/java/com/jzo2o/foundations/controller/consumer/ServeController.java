@@ -27,6 +27,7 @@ public class ServeController {
     private IServeService iServeService;
 
     @GetMapping("/firstPageServeList")
+    @ApiOperation("首页服务项图标")
     public List<ServeCategoryResDTO> firstPageServeList(Long regionId) {
         return iServeService.firstPageServeList(regionId);
     }

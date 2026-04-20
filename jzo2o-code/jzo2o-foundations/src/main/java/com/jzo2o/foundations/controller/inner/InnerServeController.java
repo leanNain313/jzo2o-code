@@ -1,5 +1,6 @@
 package com.jzo2o.foundations.controller.inner;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.jzo2o.api.foundations.dto.request.JudgeRequest;
 import com.jzo2o.api.foundations.dto.response.ServeAggregationResDTO;
 import com.jzo2o.foundations.model.domain.Serve;
@@ -22,6 +23,13 @@ public class InnerServeController {
     @GetMapping("/{id}")
     public ServeAggregationResDTO findById(@PathVariable("id")Long id){
         return serveService.findServeDetailById(id);
+    }
+
+    @GetMapping("/serve")
+    public ServeAggregationResDTO getServeByCityCodeAndItemId(Long serveItemId, String cityCode) {
+        return BeanUtil.toBean(serveService.lambdaQuery().eq(Serve::getCityCode, cityCode)
+                .eq(Serve::getServeItemId, serveItemId)
+                .one(), ServeAggregationResDTO.class);
     }
 
     @PostMapping("/region")

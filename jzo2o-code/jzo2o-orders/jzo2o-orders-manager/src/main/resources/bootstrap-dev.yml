@@ -5,10 +5,10 @@ spring:
       password: nacos
       server-addr: 124.222.74.137:8848
       config:
-        namespace: 75a593f5-33e6-4c65-b2a0-18c403d20f63
+        namespace: 50d67b24-3f44-43e0-be2a-164482d2d846
         file-extension: yaml
       discovery:
-        namespace: 75a593f5-33e6-4c65-b2a0-18c403d20f63
+        namespace: 50d67b24-3f44-43e0-be2a-164482d2d846
         ip: ${ACCESS_IP:}
 
 xxl-job-port: 11604

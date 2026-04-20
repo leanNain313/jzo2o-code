@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jzo2o.customer.mapper.OrderCommentMapper">
+
+    <!--
+      评分档位：service_score &lt;= 2 差评，3 中评，&gt;= 4 好评；
+      好评率 = 好评条数 / 评论总数
+    -->
+    <select id="selectStaffScoreStatistics" resultType="com.jzo2o.customer.model.dto.OrderCommentStaffScoreAggDTO">
+        SELECT
+            staff_id AS staffId,
+            ROUND(AVG(service_score), 1) AS avgScore,
+            COUNT(*) AS commentCount,
+            SUM(CASE WHEN service_score &gt;= 4 THEN 1 ELSE 0 END) AS goodCount
+        FROM order_comment
+        WHERE staff_id IS NOT NULL
+        GROUP BY staff_id
+    </select>
+</mapper>
