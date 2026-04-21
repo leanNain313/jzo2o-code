@@ -14,6 +14,7 @@ import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.enums.CertificationStatusEnum;
 import com.jzo2o.customer.mapper.WorkerCertificationAuditMapper;
 import com.jzo2o.customer.model.domain.AgencyCertificationAudit;
+import com.jzo2o.customer.model.domain.CommonUser;
 import com.jzo2o.customer.model.domain.ServeProvider;
 import com.jzo2o.customer.model.domain.WorkerCertification;
 import com.jzo2o.customer.model.domain.WorkerCertificationAudit;
@@ -23,6 +24,7 @@ import com.jzo2o.customer.model.dto.request.WorkerCertificationAuditAddReqDTO;
 import com.jzo2o.customer.model.dto.request.WorkerCertificationAuditPageQueryReqDTO;
 import com.jzo2o.customer.model.dto.response.RejectReasonResDTO;
 import com.jzo2o.customer.model.dto.response.WorkerCertificationAuditResDTO;
+import com.jzo2o.customer.service.ICommonUserService;
 import com.jzo2o.customer.service.IServeProviderService;
 import com.jzo2o.customer.service.IWorkerCertificationAuditService;
 import com.jzo2o.customer.service.IWorkerCertificationService;
@@ -48,6 +50,8 @@ public class WorkerCertificationAuditServiceImpl extends ServiceImpl<WorkerCerti
     private IWorkerCertificationService workerCertificationService;
     @Resource
     private IServeProviderService serveProviderService;
+    @Resource
+    private ICommonUserService commonUserService;
 
     /**
      * 服务人员申请资质认证
@@ -74,6 +78,19 @@ public class WorkerCertificationAuditServiceImpl extends ServiceImpl<WorkerCerti
             workerCertification.setId(serveProviderId);
             workerCertification.setCertificationStatus(CertificationStatusEnum.PROGRESSING.getStatus());//认证中
             workerCertificationService.saveOrUpdate(workerCertification);
+        }
+
+        // 头像（证明资料）同步到 common_user；并更新服务人员表头像以便端上「我的」与 token 侧展示一致
+        String avatarUrl = workerCertificationAuditAddReqDTO.getCertificationMaterial();
+        if (ObjectUtil.isNotEmpty(avatarUrl)) {
+            commonUserService.lambdaUpdate()
+                    .eq(CommonUser::getId, serveProviderId)
+                    .set(CommonUser::getAvatar, avatarUrl)
+                    .update();
+            serveProviderService.lambdaUpdate()
+                    .eq(ServeProvider::getId, serveProviderId)
+                    .set(ServeProvider::getAvatar, avatarUrl)
+                    .update();
         }
     }
 
@@ -120,6 +137,12 @@ public class WorkerCertificationAuditServiceImpl extends ServiceImpl<WorkerCerti
         //头像也就是证明材料
         updateWrapper1.set("avatar", workerCertificationAudit.getCertificationMaterial());
         serveProviderService.update(updateWrapper1);
+        if (ObjectUtil.isNotEmpty(workerCertificationAudit.getCertificationMaterial())) {
+            commonUserService.lambdaUpdate()
+                    .eq(CommonUser::getId, workerCertificationAudit.getServeProviderId())
+                    .set(CommonUser::getAvatar, workerCertificationAudit.getCertificationMaterial())
+                    .update();
+        }
     }
 
     /**

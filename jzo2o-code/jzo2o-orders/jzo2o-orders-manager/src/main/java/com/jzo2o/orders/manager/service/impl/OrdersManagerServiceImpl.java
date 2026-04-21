@@ -511,27 +511,28 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
      */
     @Override
     public void cancel(OrderCancelDTO orderCancelDTO) {
-        // 1) 更新订单状态为已取消
-        // update orders set orders_status = 600 where id = 订单id and orders_status = 0
-        OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
-                .id(orderCancelDTO.getId())//订单id
-                .originStatus(OrderStatusEnum.NO_PAY.getStatus())//原始状态
-                .targetStatus(OrderStatusEnum.CANCELED.getStatus())//目标状态
-                .build();
-        Integer i = ordersCommonService.updateStatus(orderUpdateStatusDTO);
-        if (i <= 0) {
-            throw new ForbiddenOperationException("订单取消失败");
-        }
-
-        // 2) 保存取消订单记录
-        OrdersCanceled ordersCanceled = new OrdersCanceled();
-        ordersCanceled.setId(orderCancelDTO.getId());//订单id
-        ordersCanceled.setCancellerId(orderCancelDTO.getCurrentUserId());//取消人
-        ordersCanceled.setCancelerName(orderCancelDTO.getCurrentUserName());//取消人名称
-        ordersCanceled.setCancellerType(orderCancelDTO.getCurrentUserType());//取消人类型，1：普通用户，4：运营人员
-        ordersCanceled.setCancelReason(orderCancelDTO.getCancelReason());//取消原因
-        ordersCanceled.setCancelTime(LocalDateTime.now());//取消时间
-        ordersCanceledMapper.insert(ordersCanceled);
+        orderCancelStrategyManager.cancel(orderCancelDTO);
+//        // 1) 更新订单状态为已取消
+//        // update orders set orders_status = 600 where id = 订单id and orders_status = 0
+//        OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
+//                .id(orderCancelDTO.getId())//订单id
+//                .originStatus(OrderStatusEnum.NO_PAY.getStatus())//原始状态
+//                .targetStatus(OrderStatusEnum.CANCELED.getStatus())//目标状态
+//                .build();
+//        Integer i = ordersCommonService.updateStatus(orderUpdateStatusDTO);
+//        if (i <= 0) {
+//            throw new ForbiddenOperationException("订单取消失败");
+//        }
+//
+//        // 2) 保存取消订单记录
+//        OrdersCanceled ordersCanceled = new OrdersCanceled();
+//        ordersCanceled.setId(orderCancelDTO.getId());//订单id
+//        ordersCanceled.setCancellerId(orderCancelDTO.getCurrentUserId());//取消人
+//        ordersCanceled.setCancelerName(orderCancelDTO.getCurrentUserName());//取消人名称
+//        ordersCanceled.setCancellerType(orderCancelDTO.getCurrentUserType());//取消人类型，1：普通用户，4：运营人员
+//        ordersCanceled.setCancelReason(orderCancelDTO.getCancelReason());//取消原因
+//        ordersCanceled.setCancelTime(LocalDateTime.now());//取消时间
+//        ordersCanceledMapper.insert(ordersCanceled);
     }
 
 

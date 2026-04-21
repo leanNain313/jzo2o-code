@@ -1,0 +1,45 @@
+{
+  "permissions": [
+    {
+      "key": "base:use",
+      "name": "客户端",
+      "description": "客户端基本使用"
+    },
+    {
+      "key": "staff:use",
+      "name": "服务人员端",
+      "description": "服务人员端"
+    },
+    {
+      "key": "admin:use",
+      "name": "管理人员端",
+      "description": "管理人员端"
+    }
+  ],
+  "roles": [
+    {
+      "key": "user",
+      "name": "用户",
+      "permissions": [
+        "base:use"
+      ],
+      "description": "客户端基本使用"
+    },
+    {
+      "key": "staff",
+      "name": "服务人员端",
+      "permissions": [
+        "staff:use"
+      ],
+      "description": "服务人员端"
+    },
+    {
+      "key": "admin",
+      "name": "管理员",
+      "permissions": [
+        "admin:use"
+      ],
+      "description": "所有权限"
+    }
+  ]
+}
