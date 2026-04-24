@@ -75,6 +75,13 @@ spring:
             - Path=/market/**
           filters:
             - Token
+        - id: agent
+          uri: lb://jzo2o-agent
+          predicates:
+            - Path=/agent/**
+          filters:
+            - StripPrefix=1
+            - Token
         - id: health
           uri: lb://jzo2o-health
           predicates:
