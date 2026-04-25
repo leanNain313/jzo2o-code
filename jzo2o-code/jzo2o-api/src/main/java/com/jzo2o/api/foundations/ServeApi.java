@@ -2,6 +2,7 @@ package com.jzo2o.api.foundations;
 
 import com.jzo2o.api.foundations.dto.request.JudgeRequest;
 import com.jzo2o.api.foundations.dto.response.ServeAggregationResDTO;
+import com.jzo2o.api.foundations.dto.response.ServeSimpleResDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,4 +26,16 @@ public interface ServeApi {
             @RequestParam String cityCode
     );
 
+    /**
+     * 按城市编码和关键词搜索服务列表（基于 ES 全文检索）
+     *
+     * @param cityCode 城市编码（必填）
+     * @param keyword  搜索关键词（可选）
+     * @return 匹配的服务简略信息列表
+     */
+    @GetMapping("/search")
+    List<ServeSimpleResDTO> search(
+            @RequestParam("cityCode") String cityCode,
+            @RequestParam(value = "keyword", required = false) String keyword
+    );
 }

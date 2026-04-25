@@ -3,12 +3,15 @@ package com.jzo2o.foundations.controller.inner;
 import cn.hutool.core.bean.BeanUtil;
 import com.jzo2o.api.foundations.dto.request.JudgeRequest;
 import com.jzo2o.api.foundations.dto.response.ServeAggregationResDTO;
+import com.jzo2o.api.foundations.dto.response.ServeSimpleResDTO;
 import com.jzo2o.foundations.model.domain.Serve;
 import com.jzo2o.foundations.service.IServeService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 //内部接口 - 服务相关接口
 @RestController
@@ -44,5 +47,26 @@ public class InnerServeController {
     @PostMapping("/place/{id}")
     public void placeOrder(@PathVariable Long id) {
         serveService.placeOrder(id);
+    }
+
+    /**
+     * 按城市编码和关键词搜索服务
+     * <p>
+     * 复用 IServeService.search() 已有的 ES 全文检索能力，
+     * 避免在智能体侧重复实现搜索逻辑（DRY）。
+     * serveTypeId 传 null 表示不限服务类型。
+     * </p>
+     */
+    @GetMapping("/search")
+    public List<ServeSimpleResDTO> search(
+            @RequestParam("cityCode") String cityCode,
+            @RequestParam(value = "keyword", required = false) String keyword) {
+        // 委托已有的 ES 搜索实现，serveTypeId 不限
+        List<com.jzo2o.foundations.model.dto.response.ServeSimpleResDTO> results =
+                serveService.search(cityCode, keyword, null);
+        // 将 foundations 内部 DTO 转换为 jzo2o-api 对外 DTO
+        return results.stream()
+                .map(r -> BeanUtil.toBean(r, ServeSimpleResDTO.class))
+                .collect(Collectors.toList());
     }
 }
