@@ -75,10 +75,18 @@ spring:
             - Path=/market/**
           filters:
             - Token
+      # jzo2o-agent 统一路由，客户端和运营端都走 /agent/**
+        - id: agent
+          uri: lb://jzo2o-agent
+          predicates:
+            - Path=/agent/**
+          filters:
+            - Token
         - id: health
           uri: lb://jzo2o-health
           predicates:
             - Path=/health/**
+
       globalcors: # 全局的跨域处理
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         corsConfigurations:

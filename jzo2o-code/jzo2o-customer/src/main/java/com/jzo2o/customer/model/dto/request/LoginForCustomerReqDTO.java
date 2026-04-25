@@ -13,7 +13,7 @@ public class LoginForCustomerReqDTO {
     /**
      * 微信授权code
      */
-    @ApiModelProperty(value = "微信授权code", required = true)
+    @ApiModelProperty(value = "微信授权code,app为验证码", required = true)
     private String code;
 
     /**
