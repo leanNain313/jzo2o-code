@@ -92,9 +92,10 @@ public class GatewayWebUtils {
      * @param headerName
      * @param headerValue
      */
-    public static void setRequestHeader(ServerWebExchange exchange, String headerName, String headerValue) {
-        exchange.mutate()
-                .request(builder -> builder.header(headerName, headerValue))
+    public static ServerWebExchange setRequestHeader(ServerWebExchange exchange, String headerName, String headerValue) {
+        // ServerWebExchange 是不可变对象，必须返回新的 exchange 继续向后传递
+        return exchange.mutate()
+                .request(builder -> builder.headers(headers -> headers.set(headerName, headerValue)))
                 .build();
     }
 
@@ -104,16 +105,17 @@ public class GatewayWebUtils {
      * @param exchange
      * @param headers  headers中包含header名称和header值，headers的数量是偶数，header名称在前，header值在后，该字段不能传控
      */
-    public static void setManyRequestHeader(ServerWebExchange exchange, String... headers) {
+    public static ServerWebExchange setManyRequestHeader(ServerWebExchange exchange, String... headers) {
 
-        ServerWebExchange.Builder mutate = exchange.mutate();
-        for (int count = 0; count < ArrayUtils
-                .length(headers); count += 2) {
-            String headerName = headers[count];
-            String headerValue = headers[count + 1];
-            mutate.request(builder -> builder.header(headerName, headerValue));
-        }
-        mutate.build();
+        return exchange.mutate()
+                .request(builder -> builder.headers(httpHeaders -> {
+                    for (int count = 0; count < ArrayUtils.length(headers); count += 2) {
+                        String headerName = headers[count];
+                        String headerValue = headers[count + 1];
+                        httpHeaders.set(headerName, headerValue);
+                    }
+                }))
+                .build();
     }
 
     /**

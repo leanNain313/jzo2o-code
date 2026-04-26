@@ -66,7 +66,7 @@ public class TokenFilter implements GatewayFilter {
         }
         // 2.2.获取tokenKey
         String tokenKey = applicationProperties.getTokenKey().get(JwtTool.getUserType(token) + "");
-        if (StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(tokenKey)) {
             return GatewayWebUtils.toResponse(exchange,
                     HttpStatus.FORBIDDEN.value(),
                     ErrorInfo.Msg.REQUEST_FORBIDDEN);
@@ -83,15 +83,12 @@ public class TokenFilter implements GatewayFilter {
         // 4.用户id和用户类型向后传递
         String userInfo = Base64Utils.encodeStr(JsonUtils.toJsonStr(currentUserInfo));
 
-        // 4.1.设置用户信息向下传递
-        GatewayWebUtils.setRequestHeader(exchange,
-                HeaderConstants.USER_INFO, userInfo);
-        // 4.2.设置用户类型向下传递
-        GatewayWebUtils.setRequestHeader(exchange,
-                HeaderConstants.USER_TYPE, currentUserInfo.getUserType() + "");
-        // 4.3.请求id
-        GatewayWebUtils.setRequestHeader(exchange, HeaderConstants.REQUEST_ID, IdUtil.getSnowflakeNextIdStr());
+        // 4.1.设置用户信息、用户类型、请求id向下传递
+        ServerWebExchange mutatedExchange = GatewayWebUtils.setManyRequestHeader(exchange,
+                HeaderConstants.USER_INFO, userInfo,
+                HeaderConstants.USER_TYPE, currentUserInfo.getUserType() + "",
+                HeaderConstants.REQUEST_ID, IdUtil.getSnowflakeNextIdStr());
         // 4.请求放行
-        return chain.filter(exchange);
+        return chain.filter(mutatedExchange);
     }
 }

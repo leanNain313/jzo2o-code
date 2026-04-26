@@ -75,7 +75,14 @@ spring:
             - Path=/market/**
           filters:
             - Token
-      # jzo2o-agent 统一路由，客户端和运营端都走 /agent/**
+        # jzo2o-agent WebSocket 路由必须使用 ws scheme，否则无法完成 Upgrade 握手
+        - id: agent-ws
+          uri: lb:ws://jzo2o-agent
+          predicates:
+            - Path=/agent/ai/chat/ws
+          filters:
+            - Token
+        # jzo2o-agent 统一 HTTP 路由，客户端和运营端都走 /agent/**
         - id: agent
           uri: lb://jzo2o-agent
           predicates:
