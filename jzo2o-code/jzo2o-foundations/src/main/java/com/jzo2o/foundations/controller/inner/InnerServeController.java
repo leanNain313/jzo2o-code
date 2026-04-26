@@ -3,15 +3,15 @@ package com.jzo2o.foundations.controller.inner;
 import cn.hutool.core.bean.BeanUtil;
 import com.jzo2o.api.foundations.dto.request.JudgeRequest;
 import com.jzo2o.api.foundations.dto.response.ServeAggregationResDTO;
-import com.jzo2o.api.foundations.dto.response.ServeSimpleResDTO;
 import com.jzo2o.foundations.model.domain.Serve;
+import com.jzo2o.foundations.model.dto.response.ServeCategoryResDTO;
+import com.jzo2o.foundations.model.dto.response.ServeSimpleResDTO;
 import com.jzo2o.foundations.service.IServeService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 //内部接口 - 服务相关接口
 @RestController
@@ -33,6 +33,14 @@ public class InnerServeController {
         return BeanUtil.toBean(serveService.lambdaQuery().eq(Serve::getCityCode, cityCode)
                 .eq(Serve::getServeItemId, serveItemId)
                 .one(), ServeAggregationResDTO.class);
+    }
+
+    /**
+     * 复用客户端首页同款区域上线服务查询，供智能体通过 Feign 获取真实可见服务。
+     */
+    @GetMapping("/firstPageServeList")
+    public List<ServeCategoryResDTO> firstPageServeList(@RequestParam("regionId") Long regionId) {
+        return serveService.firstPageServeList(regionId);
     }
 
     @PostMapping("/region")
@@ -62,11 +70,6 @@ public class InnerServeController {
             @RequestParam("cityCode") String cityCode,
             @RequestParam(value = "keyword", required = false) String keyword) {
         // 委托已有的 ES 搜索实现，serveTypeId 不限
-        List<com.jzo2o.foundations.model.dto.response.ServeSimpleResDTO> results =
-                serveService.search(cityCode, keyword, null);
-        // 将 foundations 内部 DTO 转换为 jzo2o-api 对外 DTO
-        return results.stream()
-                .map(r -> BeanUtil.toBean(r, ServeSimpleResDTO.class))
-                .collect(Collectors.toList());
+        return serveService.search(cityCode, keyword, null);
     }
 }
