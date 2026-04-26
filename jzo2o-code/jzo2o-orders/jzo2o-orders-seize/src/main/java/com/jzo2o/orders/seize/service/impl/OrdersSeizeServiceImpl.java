@@ -111,8 +111,6 @@ public class OrdersSeizeServiceImpl extends ServiceImpl<OrdersSeizeMapper, Order
     @Resource
     private DispatchProperties dispatchProperties;
 
-
-
     @Resource
     private ElasticSearchTemplate elasticSearchTemplate;
 

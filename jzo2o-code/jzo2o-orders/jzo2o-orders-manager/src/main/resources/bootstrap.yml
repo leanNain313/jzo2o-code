@@ -71,5 +71,5 @@ seata:
 logging:
   level:
     com.jzo2o: debug
-    io.seata: debug
+    io.seata: info
     org.apache.shardingsphere: debug

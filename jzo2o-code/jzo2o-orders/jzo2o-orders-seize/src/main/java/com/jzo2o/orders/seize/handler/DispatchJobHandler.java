@@ -1,5 +1,6 @@
 package com.jzo2o.orders.seize.handler;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jzo2o.common.utils.CollUtils;
 import com.jzo2o.common.utils.DateUtils;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
@@ -50,7 +52,7 @@ public class DispatchJobHandler {
     @XxlJob("dispatch")
     public void dispatchDistributeJob(){
         while (true) {
-            Set<Long> ordersDispatchIds = redisTemplate.opsForZSet().rangeByScore(DISPATCH_LIST, 0, DateUtils.getCurrentTime(), 0, 100);
+            Set<Long> ordersDispatchIds = redisTemplate.opsForZSet().rangeByScore(DISPATCH_LIST, 0, DateUtil.offsetHour(new Date(), 3).getTime(), 0, 100);
             log.info("ordersDispatchIds:{}", ordersDispatchIds);
             if (CollUtils.isEmpty(ordersDispatchIds)) {
                 log.debug("当前没有可以派单数据");
