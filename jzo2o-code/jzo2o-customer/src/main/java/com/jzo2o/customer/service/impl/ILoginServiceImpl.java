@@ -174,7 +174,7 @@ public class ILoginServiceImpl implements ILoginService {
         }
 
         // 生成登录token
-        String token = jwtTool.createToken(commonUser.getId(), commonUser.getNickname(), commonUser.getAvatar(), loginForWorkReqDTO.getUserType());
+        String token = jwtTool.createToken(commonUser.getId(), commonUser.getNickname(), commonUser.getAvatar(), UserType.C_USER);
         return new LoginResDTO(token);
     }
 }
