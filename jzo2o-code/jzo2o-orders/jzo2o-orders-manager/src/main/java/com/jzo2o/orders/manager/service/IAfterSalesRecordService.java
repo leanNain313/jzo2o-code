@@ -1,0 +1,7 @@
+package com.jzo2o.orders.manager.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.jzo2o.orders.base.model.domain.AfterSalesRecord;
+
+public interface IAfterSalesRecordService extends IService<AfterSalesRecord> {
+}
