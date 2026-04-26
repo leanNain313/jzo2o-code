@@ -1,11 +1,9 @@
 package com.jzo2o.customer.handler;
 
 import com.jzo2o.canal.listeners.AbstractCanalRabbitMqMsgListener;
-import com.jzo2o.common.expcetions.BadRequestException;
 import com.jzo2o.common.expcetions.CommonException;
 import com.jzo2o.common.model.Location;
 import com.jzo2o.common.utils.BeanUtils;
-import com.jzo2o.common.utils.CollUtils;
 import com.jzo2o.customer.constants.EsIndexConstants;
 import com.jzo2o.customer.model.domain.ServeProviderInfo;
 import com.jzo2o.customer.model.domain.ServeProviderSync;

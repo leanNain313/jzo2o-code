@@ -174,7 +174,8 @@ public class SystemAnnouncementServiceImpl extends ServiceImpl<SystemAnnouncemen
         if (!readIds.isEmpty()) {
             wrapper.notIn(SystemAnnouncement::getId, readIds);
         }
-        return count(wrapper);
+        int count = count(wrapper);
+        return Long.valueOf(String.valueOf(count));
     }
 
     private void validateSaveReq(AnnouncementSaveReqDTO reqDTO) {
