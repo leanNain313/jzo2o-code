@@ -46,8 +46,10 @@ import com.jzo2o.mvc.utils.UserContext;
 import com.jzo2o.mysql.utils.PageUtils;
 import com.jzo2o.orders.base.config.OrderStateMachine;
 import com.jzo2o.orders.base.enums.*;
+import com.jzo2o.orders.base.mapper.AfterSalesMapper;
 import com.jzo2o.orders.base.mapper.OrdersCanceledMapper;
 import com.jzo2o.orders.base.mapper.OrdersMapper;
+import com.jzo2o.orders.base.model.domain.AfterSales;
 import com.jzo2o.orders.base.model.domain.Orders;
 import com.jzo2o.orders.base.model.domain.OrdersCanceled;
 import com.jzo2o.orders.base.model.domain.OrdersServe;
@@ -143,6 +145,9 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
 
     @Resource
     private OrdersCanceledMapper ordersCanceledMapper;
+
+    @Resource
+    private AfterSalesMapper afterSalesMapper;
 
     @Value("${jzo2o.openPay}")
     private Boolean openPay;
@@ -319,6 +324,7 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
                 orderResDTO.setServerName(institutionStaffResDTO.getName());
             }
         }
+        orderResDTO.setAfterSalesInfo(queryLatestAfterSales(id, OrderResDTO.AfterSalesInfo.class));
         return orderResDTO;
     }
 
@@ -427,7 +433,17 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
         operationOrdersDetailResDTO.setServeInfo(serveInfo);
         operationOrdersDetailResDTO.setRefundInfo(refundInfo);
         operationOrdersDetailResDTO.setCancelInfo(cancelInfo);
+        operationOrdersDetailResDTO.setAfterSalesInfo(queryLatestAfterSales(id, OperationOrdersDetailResDTO.AfterSalesInfo.class));
         return operationOrdersDetailResDTO;
+    }
+
+    private <T> T queryLatestAfterSales(Long ordersId, Class<T> clazz) {
+        AfterSales afterSales = afterSalesMapper.selectOne(Wrappers.<AfterSales>lambdaQuery()
+                .eq(AfterSales::getOrdersId, ordersId)
+                .eq(AfterSales::getIsDeleted, 0)
+                .orderByDesc(AfterSales::getCreateTime)
+                .last("limit 1"));
+        return afterSales == null ? null : BeanUtil.toBean(afterSales, clazz);
     }
 
 

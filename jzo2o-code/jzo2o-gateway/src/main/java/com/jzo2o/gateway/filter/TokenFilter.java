@@ -46,7 +46,6 @@ public class TokenFilter implements GatewayFilter {
         String uri = GatewayWebUtils.getUri(exchange);
         log.info("uri : {}", uri);
 
-
         if (applicationProperties.getAccessPathBlackList().contains(uri)) {
             return GatewayWebUtils.toResponse(exchange,
                     HttpStatus.FORBIDDEN.value(),

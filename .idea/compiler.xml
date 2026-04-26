@@ -35,6 +35,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="jzo2o-agent" target="21" />
+      <module name="jzo2o-ai" target="11" />
       <module name="jzo2o-orders-dispatch" target="11" />
       <module name="xxl-job" target="1.8" />
       <module name="xxl-job-admin" target="1.8" />
@@ -46,6 +48,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="jzo2o-agent" options="-parameters" />
       <module name="jzo2o-api" options="-parameters" />
       <module name="jzo2o-canal-sync" options="-parameters" />
       <module name="jzo2o-common" options="-parameters" />
