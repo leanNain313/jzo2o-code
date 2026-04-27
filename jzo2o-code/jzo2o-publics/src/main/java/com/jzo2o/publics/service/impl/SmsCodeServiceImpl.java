@@ -1,5 +1,7 @@
 package com.jzo2o.publics.service.impl;
 
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.jzo2o.common.constants.CommonRedisConstants;
 import com.jzo2o.common.enums.SmsBussinessTypeEnum;
 import com.jzo2o.common.utils.StringUtils;
@@ -27,7 +29,7 @@ public class SmsCodeServiceImpl implements ISmsCodeService {
         }
         String redisKey = String.format(CommonRedisConstants.RedisKey.VERIFY_CODE, smsCodeSendReqDTO.getPhone(), smsCodeSendReqDTO.getBussinessType());
         // 取6位随机数
-//        String verifyCode = (int)(Math.random() * 1000000) + "";
+//        String verifyCode = RandomUtil.randomNumbers(6);/**/
         String verifyCode = "123456";//为方便测试固定为123456
         log.info("向手机号{}发送验证码{}",smsCodeSendReqDTO.getPhone(),verifyCode);
         //todo调用短信平台接口向指定手机发验证码...

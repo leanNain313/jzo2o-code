@@ -135,6 +135,7 @@ public class WorkerCertificationAuditServiceImpl extends ServiceImpl<WorkerCerti
         UpdateWrapper<ServeProvider> updateWrapper1 = new UpdateWrapper<>();
         updateWrapper1.eq("id", workerCertificationAudit.getServeProviderId());
         //头像也就是证明材料
+        updateWrapper1.set("name", workerCertificationAudit.getName());
         updateWrapper1.set("avatar", workerCertificationAudit.getCertificationMaterial());
         serveProviderService.update(updateWrapper1);
         if (ObjectUtil.isNotEmpty(workerCertificationAudit.getCertificationMaterial())) {

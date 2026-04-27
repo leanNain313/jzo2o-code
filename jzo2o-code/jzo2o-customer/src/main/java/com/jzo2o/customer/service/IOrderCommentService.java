@@ -5,9 +5,11 @@ import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.model.domain.OrderComment;
 import com.jzo2o.customer.model.dto.request.OrderCommentCreateReqDTO;
 import com.jzo2o.customer.model.dto.request.OrderCommentDeleteReqDTO;
+import com.jzo2o.customer.model.dto.request.OrderCommentOperationPageReqDTO;
 import com.jzo2o.customer.model.dto.request.OrderCommentPageReqDTO;
 import com.jzo2o.customer.model.dto.response.CommentCount;
 import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
+import com.jzo2o.customer.model.dto.response.OrderCommentOperationPageResDTO;
 import com.jzo2o.customer.model.dto.response.OrderCommentPageResDTO;
 
 /**
@@ -29,6 +31,14 @@ public interface IOrderCommentService extends IService<OrderComment> {
      * @return 分页结果
      */
     PageResult<OrderCommentPageResDTO> pageByServeItemId(OrderCommentPageReqDTO reqDTO);
+
+    /**
+     * 运营端分页查询订单评价
+     *
+     * @param reqDTO 查询条件
+     * @return 分页结果
+     */
+    PageResult<OrderCommentOperationPageResDTO> operationPage(OrderCommentOperationPageReqDTO reqDTO);
 
     /**
      * 根据评论id删除评论（评论id即order_id）

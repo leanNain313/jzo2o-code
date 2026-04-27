@@ -19,9 +19,11 @@ import com.jzo2o.customer.model.domain.OrderComment;
 import com.jzo2o.customer.model.dto.request.OrderCommentCreateReqDTO;
 import com.jzo2o.customer.model.dto.request.OrderCommentDeleteReqDTO;
 import com.jzo2o.customer.model.dto.OrderCommentStaffScoreAggDTO;
+import com.jzo2o.customer.model.dto.request.OrderCommentOperationPageReqDTO;
 import com.jzo2o.customer.model.dto.request.OrderCommentPageReqDTO;
 import com.jzo2o.customer.model.dto.response.CommentCount;
 import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
+import com.jzo2o.customer.model.dto.response.OrderCommentOperationPageResDTO;
 import com.jzo2o.customer.model.dto.response.OrderCommentPageResDTO;
 import com.jzo2o.customer.service.ICommonUserService;
 import com.jzo2o.customer.service.IOrderCommentService;
@@ -143,6 +145,27 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
     }
 
     /**
+     * 运营端分页查询订单评价
+     */
+    @Override
+    public PageResult<OrderCommentOperationPageResDTO> operationPage(OrderCommentOperationPageReqDTO reqDTO) {
+        Page<OrderComment> page = PageUtils.parsePageQuery(reqDTO, OrderComment.class);
+
+        LambdaQueryWrapper<OrderComment> queryWrapper = Wrappers.<OrderComment>lambdaQuery()
+                .eq(ObjectUtil.isNotEmpty(reqDTO.getOrderId()), OrderComment::getOrderId, reqDTO.getOrderId())
+                .eq(ObjectUtil.isNotEmpty(reqDTO.getServeItemId()), OrderComment::getServeItemId, reqDTO.getServeItemId())
+                .eq(ObjectUtil.isNotEmpty(reqDTO.getStaffId()), OrderComment::getStaffId, reqDTO.getStaffId())
+                .eq(ObjectUtil.isNotEmpty(reqDTO.getUserId()), OrderComment::getUserId, reqDTO.getUserId())
+                .ge(ObjectUtil.isNotEmpty(reqDTO.getMinCreatedAt()), OrderComment::getCreatedAt, reqDTO.getMinCreatedAt())
+                .le(ObjectUtil.isNotEmpty(reqDTO.getMaxCreatedAt()), OrderComment::getCreatedAt, reqDTO.getMaxCreatedAt())
+                .orderByDesc(OrderComment::getCreatedAt);
+        applyWorkerScoreLevelFilter(queryWrapper, reqDTO.getScoreLevel());
+
+        Page<OrderComment> resultPage = baseMapper.selectPage(page, queryWrapper);
+        return toOperationPageResult(resultPage);
+    }
+
+    /**
      * 根据评论id删除评论
      */
     @Override
@@ -248,6 +271,32 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
         return pageResult;
     }
 
+    private PageResult<OrderCommentOperationPageResDTO> toOperationPageResult(Page<OrderComment> resultPage) {
+        List<OrderComment> records = resultPage.getRecords();
+        if (CollUtils.isEmpty(records)) {
+            PageResult<OrderCommentOperationPageResDTO> empty = PageResult.getInstance();
+            empty.setList(Collections.emptyList());
+            empty.setTotal(resultPage.getTotal());
+            empty.setPages(resultPage.getPages());
+            return empty;
+        }
+
+        List<Long> orderIds = records.stream().map(OrderComment::getOrderId).distinct().collect(Collectors.toList());
+        List<OrderResDTO> orderList = ordersApi.queryByIds(orderIds);
+        Map<Long, OrderResDTO> ordersMap = CollUtils.isEmpty(orderList)
+                ? Collections.emptyMap()
+                : orderList.stream().collect(Collectors.toMap(OrderResDTO::getId, o -> o, (a, b) -> a));
+
+        List<OrderCommentOperationPageResDTO> dtoList = records.stream()
+                .map(comment -> toOperationPageRes(comment, ordersMap.get(comment.getOrderId())))
+                .collect(Collectors.toList());
+        PageResult<OrderCommentOperationPageResDTO> pageResult = PageResult.getInstance();
+        pageResult.setList(dtoList);
+        pageResult.setTotal(resultPage.getTotal());
+        pageResult.setPages(resultPage.getPages());
+        return pageResult;
+    }
+
     /**
      * scoreLevel：1 差评≤2，2 中评=3，3 好评≥4；null 不按等级筛选。
      */
@@ -294,6 +343,31 @@ public class OrderCommentServiceImpl extends ServiceImpl<OrderCommentMapper, Ord
             if (order.getServeStartTime() != null) {
                 dto.setUpdateTime(Date.from(order.getServeStartTime().atZone(ZoneId.systemDefault()).toInstant()));
             }
+        }
+        return dto;
+    }
+
+    private static OrderCommentOperationPageResDTO toOperationPageRes(OrderComment comment, OrderResDTO order) {
+        OrderCommentOperationPageResDTO dto = new OrderCommentOperationPageResDTO();
+        dto.setOrderId(comment.getOrderId());
+        dto.setServeItemId(comment.getServeItemId());
+        dto.setStaffId(comment.getStaffId());
+        dto.setUserId(comment.getUserId());
+        dto.setUserName(comment.getUserName());
+        dto.setUserAvatar(comment.getUserAvatar());
+        dto.setServiceScore(comment.getServiceScore());
+        dto.setScoreLevel(resolveScoreLevelTag(comment.getServiceScore()));
+        dto.setContent(comment.getContent());
+        dto.setImageList(comment.getImageList());
+        dto.setCreatedAt(comment.getCreatedAt());
+
+        if (order != null) {
+            dto.setServeItemId(ObjectUtil.defaultIfNull(comment.getServeItemId(), order.getServeItemId()));
+            dto.setServeItemName(order.getServeItemName());
+            dto.setStaffId(ObjectUtil.defaultIfNull(comment.getStaffId(), order.getServerId()));
+            dto.setStaffName(order.getServerName());
+            dto.setServeStartTime(order.getServeStartTime());
+            dto.setServeAddress(order.getServeAddress());
         }
         return dto;
     }

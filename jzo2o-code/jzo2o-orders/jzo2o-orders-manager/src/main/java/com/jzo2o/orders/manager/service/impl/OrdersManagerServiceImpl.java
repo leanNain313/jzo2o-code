@@ -628,6 +628,7 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
                 .lt(ObjectUtils.isNotNull(sortBy), Orders::getSortBy, sortBy)
                 .eq(Orders::getUserId, currentUserId)
                 .eq(Orders::getDisplay, EnableStatusEnum.ENABLE.getStatus())
+                .orderByDesc(Orders::getCreateTime)
                 .select(Orders::getId);
 
         Page<Orders> queryPage = new Page<>();
