@@ -1,14 +1,14 @@
 spring:
   cloud:
     nacos:
-      username: nacos
-      password: nacos
-      server-addr: 124.222.74.137:8848
+      username: ${NACOS_USERNAME}
+      password: ${NACOS_PASSWORD}
+      server-addr: ${NACOS_ADDR:127.0.0.1:8848}
       config:
-        namespace: 50d67b24-3f44-43e0-be2a-164482d2d846
+        namespace: ${NACOS_NAMESPACE:your-nacos-namespace}
         file-extension: yaml
       discovery:
-        namespace: 50d67b24-3f44-43e0-be2a-164482d2d846
+        namespace: ${NACOS_NAMESPACE:your-nacos-namespace}
         ip: ${ACCESS_IP:}
 
 xxl-job-port: 11605

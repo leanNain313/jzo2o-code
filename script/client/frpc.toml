@@ -1,8 +1,8 @@
 transport.tls.enable = true		# 从 v0.50.0版本开始，transport.tls.enable的默认值为 true
-serverAddr = "175.24.138.204" # 服务端ip
+serverAddr = "your-frp-server-ip" # 服务端ip
 serverPort = 7000 # 服务端端口
 auth.method = 'token' # 客户端访问验证方式
-auth.token = 'Yye02408926.' # 客户端访问验证密码
+auth.token = 'your-frp-auth-token' # 客户端访问验证密码
 
 [[proxies]]
 name = "fonted_client"
