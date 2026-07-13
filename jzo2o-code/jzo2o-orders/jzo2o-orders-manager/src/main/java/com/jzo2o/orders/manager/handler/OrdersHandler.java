@@ -117,7 +117,9 @@ public class OrdersHandler {
         List<OrdersRefund> ordersRefundList = ordersRefundService.queryRefundOrderListByCount(100);
         for (OrdersRefund ordersRefund : ordersRefundList) {
             //请求退款
+            log.warn("开始批量处理退款...");
             requestRefundOrder(ordersRefund);
+            log.warn("退款批量处理完毕");
         }
     }
 
@@ -178,7 +180,8 @@ public class OrdersHandler {
         ordersCreateService.updateRefundStatus(ordersRefund.getId(), refundStatus, executionResultResDTO.getRefundId(), executionResultResDTO.getRefundNo());
 
         //非退款中状态，删除申请退款记录，删除后定时任务不再扫描
-        ordersRefundService.removeById(ordersRefund.getId());
+        boolean b = ordersRefundService.removeById(ordersRefund.getId());
+        log.warn("退款状态：" + b);
 
         //新增快照
         String jsonResult = orderStateMachine.getCurrentSnapshot(ordersRefund.getId().toString());

@@ -38,4 +38,5 @@ public class MapController {
         MapLocationDTO mapLocationDTO = mapService.getCityCodeByLocation(location);
         return BeanUtil.toBean(mapLocationDTO, MapLocationResDTO.class);
     }
+
 }

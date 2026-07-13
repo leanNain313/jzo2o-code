@@ -36,6 +36,28 @@ public class OperationOrdersDetailResDTO {
     @ApiModelProperty("订单取消理由")
     private CancelInfo cancelInfo;
 
+    @ApiModelProperty("售后信息")
+    private AfterSalesInfo afterSalesInfo;
+
+    @Data
+    @ApiModel("售后信息")
+    public static class AfterSalesInfo {
+        @ApiModelProperty("售后单id")
+        private Long id;
+
+        @ApiModelProperty("售后类型")
+        private Integer afterSalesType;
+
+        @ApiModelProperty("售后状态")
+        private Integer status;
+
+        @ApiModelProperty("申请原因")
+        private String reason;
+
+        @ApiModelProperty("创建时间")
+        private LocalDateTime createTime;
+    }
+
     @Data
     @ApiModel("订单信息模型")
     public static class OrderInfo {
