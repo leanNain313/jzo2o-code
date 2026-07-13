@@ -1,17 +1,17 @@
 #dataSources:
 #  jzo2o-orders-0:
 #    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
-#    jdbcUrl: jdbc:mysql://124.222.74.137:3306/jzo2o-orders-0?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+#    jdbcUrl: jdbc:mysql://your-mysql-host:3306/jzo2o-orders-0?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: mysql
 #  jzo2o-orders-1:
 #    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
-#    jdbcUrl: jdbc:mysql://124.222.74.137:3306/jzo2o-orders-1?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+#    jdbcUrl: jdbc:mysql://your-mysql-host:3306/jzo2o-orders-1?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: mysql
 #  jzo2o-orders-2:
 #    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
-#    jdbcUrl: jdbc:mysql://124.222.74.137:3306/jzo2o-orders-2?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+#    jdbcUrl: jdbc:mysql://your-mysql-host:3306/jzo2o-orders-2?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: mysql
 #rules:

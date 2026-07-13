@@ -123,5 +123,5 @@ jzo2o:
     - /publics/v2/api-docs
     - /publics/sms-code/send
     - /customer/agency/serve-provider/institution/resetPassword
-    - /trade/open/notify/wx/1561414331
-    - /trade/open/notify/alipay/2088241317544335
+    - /trade/open/notify/wx/your-wx-mch-id
+    - /trade/open/notify/alipay/your-alipay-pid
